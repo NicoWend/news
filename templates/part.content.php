@@ -100,17 +100,40 @@
                         </li>
                         <div class="dropdown-content">
                                 <!-- Contact -->
-                                <a>Liste contact</a>
+                                <p class="label-group">Contacts</p>
+                                <form ng-submit="" name="contactForm">
+                                    <fieldset>
+                                        <input type="text"
+                                               class="contact-input"
+                                               placeholder="Nom de contact"
+                                               title="Nom de contact"
+                                               name="contactName"
+                                               required>
+                                        <input type="submit"
+                                               value="Ajouter"
+                                               class="primary">
+                                    </fieldset>
+                                </form>
+
+
                                 <a>Arnaud</a>
                                 <a>Antoine</a>
                                 <a>Adrien</a>
 
-                                <a class="icon-facebook pr-5" ng-click="">
+                                <p class="label-group">Partage réseaux sociaux</p>
+
+                                <a class="icon-facebook pr-5"
+                                   ng-href="https://www.facebook.com/sharer/sharer.php?u={{ ::item.url }}"
+
+                                >
                                     <span>
                                         Facebook
                                     </span>
                                 </a>
-                                <a class="icon-twitter pr-5" ng-click="">
+                                <a class="icon-twitter pr-5"
+                                   ng-href="https://twitter.com/intent/tweet?url={{ ::item.url }}"
+
+                                >
                                     <span> Twitter </span>
                                 </a>
 

@@ -7,9 +7,9 @@
  * @author Bernhard Posselt <dev@bernhard-posselt.com>
  * @copyright Bernhard Posselt 2014
  */
-app.controller('ContentController', function (Publisher, FeedResource, ItemResource, SettingsResource, data, $route,
-                                              $routeParams, $location, FEED_TYPE, ITEM_AUTO_PAGE_SIZE, Loading,
-                                              $filter) {
+app.controller('ContentController', function (Publisher, FeedResource, ItemResource, SettingsResource, UserResource,
+                                              data, $route, $routeParams, $location, FEED_TYPE, ITEM_AUTO_PAGE_SIZE,
+                                              Loading, $filter) {
     'use strict';
 
     var self = this;
@@ -216,4 +216,9 @@ app.controller('ContentController', function (Publisher, FeedResource, ItemResou
     };
 
     this.activeItem = this.getFirstItem();
+
+    this.searchUsers = function(search) {
+        return UserResource.getUsers(search);
+    };
+
 });

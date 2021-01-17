@@ -51,7 +51,7 @@ class Item extends Entity implements IAPI, \JsonSerializable
     protected $mediaThumbnail;
     /** @var string|null */
     protected $mediaDescription;
-    /** @var int */
+    /** @var int|null */
     protected $feedId;
     /** @var int */
     protected $status = 0;
@@ -67,6 +67,11 @@ class Item extends Entity implements IAPI, \JsonSerializable
     protected $unread = false;
     /** @var bool */
     protected $starred = false;
+    /** @var string */
+    protected $sharedBy = '';
+    /** @var string */
+    protected $sharedWith = '';
+
 
     public function __construct()
     {
@@ -91,6 +96,8 @@ class Item extends Entity implements IAPI, \JsonSerializable
         $this->addType('fingerprint', 'string');
         $this->addType('unread', 'boolean');
         $this->addType('starred', 'boolean');
+        $this->addType('sharedBy', 'string');
+        $this->addType('sharedWith', 'string');
     }
 
     /**
@@ -199,7 +206,10 @@ class Item extends Entity implements IAPI, \JsonSerializable
         return $this->enclosureMime;
     }
 
-    public function getFeedId(): string
+    /**
+     * @return null|int
+     */
+    public function getFeedId(): ?string
     {
         return $this->feedId;
     }
@@ -288,6 +298,16 @@ class Item extends Entity implements IAPI, \JsonSerializable
     public function isUnread(): bool
     {
         return $this->unread;
+    }
+
+    public function getSharedBy(): string
+    {
+        return $this->sharedBy;
+    }
+
+    public function getSharedWith(): string
+    {
+        return $this->sharedWith;
     }
 
     /**
@@ -395,7 +415,7 @@ class Item extends Entity implements IAPI, \JsonSerializable
         return $this;
     }
 
-    public function setFeedId(int $feedId): self
+    public function setFeedId(?int $feedId = null): self
     {
         if ($this->feedId !== $feedId) {
             $this->feedId = $feedId;
@@ -492,6 +512,26 @@ class Item extends Entity implements IAPI, \JsonSerializable
         if ($this->title !== $title) {
             $this->title = $title;
             $this->markFieldUpdated('title');
+        }
+
+        return $this;
+    }
+
+    public function setSharedBy(string $sharedBy): self
+    {
+        if ($this->sharedBy !== $sharedBy) {
+            $this->sharedBy = $sharedBy;
+            $this->markFieldUpdated('sharedBy');
+        }
+
+        return $this;
+    }
+
+    public function setSharedWith(string $sharedWith): self
+    {
+        if ($this->sharedWith !== $sharedWith) {
+            $this->sharedWith = $sharedWith;
+            $this->markFieldUpdated('sharedWith');
         }
 
         return $this;

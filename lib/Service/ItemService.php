@@ -342,4 +342,14 @@ class ItemService extends Service
     {
         return $this->mapper->findAll();
     }
+
+
+    public function shareItem($itemId, $shareWithId, $userId)
+    {
+        try {
+            $this->itemMapper->shareItem($itemId, $shareWithId, $userId);
+        } catch (DoesNotExistException $ex) {
+            throw new ServiceNotFoundException($ex->getMessage());
+        }
+    }
 }

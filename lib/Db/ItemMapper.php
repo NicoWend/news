@@ -517,4 +517,29 @@ class ItemMapper extends NewsMapper
     {
         return [];
     }
+
+    
+    public function shareItem($itemId, $shareWithId, $userId)
+    {
+        // find existing item and copy it
+        $item = $this->find($userId, $itemId);
+
+        // copy item
+        $newItem = Item::fromImport($item->jsonSerialize());
+
+        // copy/initialize fields
+        $newItem->setUnread(false);
+        $newItem->setStarred(false);
+        $newItem->setFeedId(null);
+        $newItem->setFingerprint($item->getFingerprint());
+        $newItem->setContentHash($item->getContentHash());
+        $newItem->setSearchIndex($item->getSearchIndex());
+        
+        // set share data
+        $newItem->setSharedBy($userId);
+        $newItem->setSharedWith($shareWithId);
+
+        // persist new item
+        $this->insert($newItem);
+    }
 }

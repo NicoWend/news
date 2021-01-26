@@ -122,6 +122,8 @@ class ItemController extends Controller
                 $params['feeds'] = $this->feedService->findAllForUser($this->userId);
                 $params['starred'] =
                     $this->itemService->starredCount($this->userId);
+                $params['shared'] =
+                    $this->itemService->sharedCount($this->userId);
             }
 
             $params['items'] = $this->itemService->findAllItems(

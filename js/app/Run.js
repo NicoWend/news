@@ -50,7 +50,6 @@ app.run(function ($rootScope, $location, $http, $q, $interval, $route, Loading, 
                 case FEED_TYPE.EXPLORE:
                     url = '/explore';
                     break;
-
                 case FEED_TYPE.UNREAD:
                     url = '/items/unread';
                     break;

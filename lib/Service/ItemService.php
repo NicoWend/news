@@ -139,6 +139,15 @@ class ItemService extends Service
                     $userId,
                     $search
                 );
+            case FeedType::SHARED:
+                return $this->itemMapper->findAllShared(
+                    $limit,
+                    $offset,
+                    $showAll,
+                    $oldestFirst,
+                    $userId,
+                    $search
+                );
             default:
                 return $this->itemMapper->findAllItems(
                     $limit,

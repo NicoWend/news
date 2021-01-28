@@ -111,8 +111,8 @@
                                             ng-change="Share.searchUsers(nameQuery)"
                                             type="text"
                                             class="contact-input"
-                                            placeholder="Nom de contact"
-                                            title="Nom de contact"
+                                            placeholder="<?php p($l->t('Contact name')) ?>"
+                                            title="<?php p($l->t('Contact name')) ?>"
                                             name="contactName"
                                             required>
                                     </fieldset>
@@ -121,7 +121,7 @@
 
                                 <div ng-class="{'icon-loading-small': App.loading.isLoading('user') }">
                                 </div>
-                                <a
+                                <a  
                                     ng-repeat="user in Share.userList"
                                     ng-click="Share.shareItem(item.id, user.value.shareWith)">
                                     {{ user.value.shareWith }}
@@ -129,7 +129,7 @@
                                             ng-class="{'icon-loading-small': App.loading.isLoading(user.value.shareWith)}"></span>
                                 </a>
 
-                                <p class="label-group">Partage réseaux sociaux</p>
+                                <p class="label-group"> <?php p($l->t('Share on social media')) ?> </p>
 
                                 <a class="icon-facebook pr-5"
                                    ng-href="https://www.facebook.com/sharer/sharer.php?u={{ ::item.url }}"

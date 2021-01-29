@@ -44,6 +44,14 @@ OC.L10N.register(
     "Export" : "Stuur Uit",
     "Help" : "Hulp",
     "Keyboard shortcuts" : "Sneltoetse",
-    "Documentation" : "Dokumentasie"
+    "Documentation" : "Dokumentasie",
+    "Report a bug" : "Rapporteer 'n fout",
+    "Contacts" : "kontakte",
+    "Share on social media" : "Deel op sosiale media",
+    "Contact name" : "Kontak naam",
+    "shared from" : "gedeel van",
+    "Shared": "Gedeel",
+    "Shared articles": "Gedeelde artikels"
+
 },
 "nplurals=2; plural=(n != 1);");

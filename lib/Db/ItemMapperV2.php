@@ -148,5 +148,5 @@ class ItemMapperV2 extends NewsMapperV2
                          ->where('');
 
         return $this->db->executeQuery($query)->fetch(FetchMode::ASSOCIATIVE);
-    }
+    }                
 }

@@ -68,7 +68,8 @@ class FeedController extends Controller
         // item id which will be used for marking feeds read
         $params = [
             'feeds' => $this->feedService->findAllForUser($this->userId),
-            'starred' => $this->itemService->starredCount($this->userId)
+            'starred' => $this->itemService->starredCount($this->userId),
+            'shared' => $this->itemService->sharedCount($this->userId),
         ];
 
         try {

@@ -129,5 +129,6 @@ OC.L10N.register(
     "Report a bug" : "Signaler un bogue",
     "Share on social media" : "partager sur les reseaux sociaux",
     "Contact name" : "Nom de contact"
+
 },
 "nplurals=2; plural=(n > 1);");

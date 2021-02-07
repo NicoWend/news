@@ -202,7 +202,8 @@ class ItemControllerTest extends TestCase
             'items' => [new Item()],
             'feeds' => $feeds,
             'newestItemId' => $this->newestItemId,
-            'starred' => 3111
+            'starred' => 3111,
+            'shared' => 99
         ];
 
         $this->itemsApiExpects(2, FeedType::FEED, '0');
@@ -221,6 +222,11 @@ class ItemControllerTest extends TestCase
             ->method('starredCount')
             ->with($this->equalTo($this->user))
             ->will($this->returnValue(3111));
+
+        $this->itemService->expects($this->once())
+            ->method('sharedCount')
+            ->with($this->equalTo($this->user))
+            ->will($this->returnValue($result['shared']));
 
         $this->itemService->expects($this->once())
             ->method('findAllItems')
@@ -239,7 +245,8 @@ class ItemControllerTest extends TestCase
             'items' => [new Item()],
             'feeds' => $feeds,
             'newestItemId' => $this->newestItemId,
-            'starred' => 3111
+            'starred' => 3111,
+            'shared' => 99
         ];
 
         $this->itemsApiExpects(2, FeedType::FEED, '0');
@@ -258,6 +265,11 @@ class ItemControllerTest extends TestCase
             ->method('starredCount')
             ->with($this->equalTo($this->user))
             ->will($this->returnValue(3111));
+
+        $this->itemService->expects($this->once())
+            ->method('sharedCount')
+            ->with($this->equalTo($this->user))
+            ->will($this->returnValue($result['shared']));
 
         $this->itemService->expects($this->once())
             ->method('findAllItems')
@@ -329,7 +341,8 @@ class ItemControllerTest extends TestCase
             'items' => [new Item()],
             'feeds' => $feeds,
             'newestItemId' => $this->newestItemId,
-            'starred' => 3111
+            'starred' => 3111,
+            'shared' => 99
         ];
 
         $this->settings->expects($this->once())
@@ -355,6 +368,11 @@ class ItemControllerTest extends TestCase
             ->method('starredCount')
             ->with($this->equalTo($this->user))
             ->will($this->returnValue(3111));
+
+        $this->itemService->expects($this->once())
+            ->method('sharedCount')
+            ->with($this->equalTo($this->user))
+            ->will($this->returnValue($result['shared']));
 
         $this->itemService->expects($this->once())
             ->method('findAllNew')

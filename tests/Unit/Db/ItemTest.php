@@ -140,6 +140,8 @@ class ItemTest extends TestCase
         $item->setFingerprint('fingerprint');
         $item->setStarred(true);
         $item->setLastModified(321);
+        $item->setSharedBy('jack');
+        $item->setSharedWith('mclovin');
 
         $this->assertEquals(
             [
@@ -162,7 +164,10 @@ class ItemTest extends TestCase
             'lastModified' => 321,
             'rtl' => true,
             'intro' => 'this is a test',
-            'fingerprint' => 'fingerprint'
+            'fingerprint' => 'fingerprint',
+            'sharedBy' => 'jack',
+            'sharedWith' => 'mclovin',
+            'isShared' => true,
             ], $item->jsonSerialize()
         );
     }

@@ -379,4 +379,17 @@ class ItemTest extends TestCase
         );
     }
 
+    public function testSetSharedBy(){
+        $item = new Item();
+        $item->setSharedBy('Hector');
+        $this->assertEquals('Hector', $item->getSharedBy());
+        $this->assertArrayHasKey('sharedBy', $item->getUpdatedFields());
+    }
+
+    public function testSetSharedWith(){
+        $item = new Item();
+        $item->setSharedWith('Hector');
+        $this->assertEquals('Hector', $item->getSharedWith());
+        $this->assertArrayHasKey('sharedWith', $item->getUpdatedFields());
+    }
 }

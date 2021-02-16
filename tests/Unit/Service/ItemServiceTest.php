@@ -552,5 +552,29 @@ class ItemServiceTest extends TestCase
     }
 
 
+    public function testShareItem()
+    {
+        $itemId = 3;
 
+        $this->mapper->expects($this->once())
+            ->method('shareItem')
+            ->with(
+                $this->equalTo($itemId),                
+                $this->equalTo('john'),
+                $this->equalTo('jack')
+            )
+            ->will($this->returnValue(new Item()));
+
+        $this->itemService->shareItem($itemId, 'john','jack');
+    }
+
+    public function testShareItemDoesNotExist()
+    {
+        $this->expectException(ServiceNotFoundException::class);
+        $this->mapper->expects($this->once())
+            ->method('shareItem')
+            ->will($this->throwException(new DoesNotExistException('')));
+
+        $this->itemService->shareItem(1, 'john', 'jack');
+    }
 }

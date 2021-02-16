@@ -121,6 +121,13 @@ OC.L10N.register(
     "Help" : "Βοήθεια",
     "Keyboard shortcuts" : "Συντομεύσεις πλητρολογίου",
     "Documentation" : "Τεκμηρίωση",
-    "Report a bug" : "Αναφορά σφάλματος"
+    "Report a bug" : "Αναφορά σφάλματος",
+
+    "Contacts" : "Επαφές",
+    "Share on social media" : "Κοινή χρήση στα μέσα κοινωνικής δικτύωσης",
+    "Contact name" : "Ονομα επαφής",
+    "shared from" : "κοινοποιήθηκε από",
+    "Shared": "Κοινόχρηστο",
+    "Shared articles": "Κοινόχρηστα άρθρα"
 },
 "nplurals=2; plural=(n != 1);");

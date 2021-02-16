@@ -113,12 +113,6 @@ OC.L10N.register(
     "Help" : "Help",
     "Keyboard shortcuts" : "Keyboard shortcuts",
     "Documentation" : "Documentation",
-    "Report a bug" : "Report a bug",
-    "Contacts" : "Contacts",
-    "Share on social media" : "Share on social media",
-    "Contact name" : "Contact name",
-    "shared from" : "Shared from",
-    "Shared": "Shared",
-    "Shared articles": "Shared articles"
+    "Report a bug" : "Report a bug"
 },
 "nplurals=2; plural=(n != 1);");

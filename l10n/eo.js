@@ -49,13 +49,6 @@ OC.L10N.register(
     "Help" : "Helpo",
     "Keyboard shortcuts" : "Fulmoklavoj",
     "Documentation" : "Dokumentaro",
-    "Report a bug" : "Raporti problemon",
-
-    "Contacts" : "Kontaktoj",
-    "Share on social media" : "Kunhavigi en sociaj retoj",
-    "Contact name" : "Kontakta nomo",
-    "shared from" : "dividita de",
-    "Shared": "Kunhavigita",
-    "Shared articles": "Komunaj artikoloj"
+    "Report a bug" : "Raporti problemon"
 },
 "nplurals=2; plural=(n != 1);");

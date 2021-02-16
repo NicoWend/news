@@ -47,6 +47,12 @@
     "Help" : "Helpo",
     "Keyboard shortcuts" : "Fulmoklavoj",
     "Documentation" : "Dokumentaro",
-    "Report a bug" : "Raporti problemon"
+    "Report a bug" : "Raporti problemon",
+    "Contacts" : "Kontaktoj",
+    "Share on social media" : "Kunhavigi en sociaj retoj",
+    "Contact name" : "Kontakta nomo",
+    "shared from" : "dividita de",
+    "Shared": "Kunhavigita",
+    "Shared articles": "Komunaj artikoloj"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

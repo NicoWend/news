@@ -110,6 +110,13 @@ OC.L10N.register(
     "Help" : "Hjælp",
     "Keyboard shortcuts" : "Tastaturgenveje",
     "Documentation" : "Dokumentation",
-    "Report a bug" : "Rapporter en fejl"
+    "Report a bug" : "Rapporter en fejl",
+
+    "Contacts" : "Kontakter",
+    "Share on social media" : "Del på sociale medier",
+    "Contact name" : "Kontakt navn",
+    "shared from" : "delt fra",
+    "Shared": "Delt",
+    "Shared articles": "Delte artikler"
 },
 "nplurals=2; plural=(n != 1);");

@@ -122,6 +122,15 @@ OC.L10N.register(
     "Help" : "Ajuda",
     "Keyboard shortcuts" : "Dreceres de teclat",
     "Documentation" : "Documentació",
-    "Report a bug" : "Informa d'un error"
+    "Report a bug" : "Informa d'un error",
+
+    "Contacts" : "contactes",
+    "Share on social media" : "Compartir a les xarxes socials",
+    "Contact name" : "Nom de contacte",
+    "shared from" : "compartit des de",
+    "Shared": "Compartit",
+    "Shared articles": "Articles compartits"
+
+
 },
 "nplurals=2; plural=(n != 1);");

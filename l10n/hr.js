@@ -113,6 +113,14 @@ OC.L10N.register(
     "Help" : "Pomoć",
     "Keyboard shortcuts" : "Tipkovni prečaci",
     "Documentation" : "Dokumentacija",
-    "Report a bug" : "Prijavi pogrešku"
+    "Report a bug" : "Prijavi pogrešku",
+
+    "Contacts" : "Kontakti",
+    "Share on social media" : "Podijelite na društvenim mrežama",
+    "Contact name" : "Ime kontakta",
+    "shared from" : "dijeli od",
+    "Shared": "Podijeljeno",
+    "Shared articles": "Zajednički članci",
+    "Users":"Korisnici"
 },
 "nplurals=3; plural=n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2;");

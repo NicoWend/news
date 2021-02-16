@@ -123,13 +123,6 @@ OC.L10N.register(
     "Help" : "Ayuda",
     "Keyboard shortcuts" : "Atajos de teclado",
     "Documentation" : "Documentación",
-    "Report a bug" : "Notificar un error",
-    "Contacts" : "Contactos",
-    "Share on social media" : "Comparte en las redes sociales",
-    "Contact name" : "Nombre de contacto",
-    "shared from" : "compartido desde",
-    "Shared": "Compartido",
-    "Shared articles": "Artículos compartidos"
-
+    "Report a bug" : "Notificar un error"
 },
 "nplurals=2; plural=(n != 1);");

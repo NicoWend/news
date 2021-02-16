@@ -113,14 +113,6 @@ OC.L10N.register(
     "Help" : "Súgó",
     "Keyboard shortcuts" : "Gyorsbillentyűk",
     "Documentation" : "Dokumentáció",
-    "Report a bug" : "Hiba bejelentése",
-
-    "Contacts" : "Névjegyek",
-    "Share on social media" : "Oszd meg a közösségi médiában",
-    "Contact name" : "Kapcsolattartó neve",
-    "shared from" : "megosztva innen",
-    "Shared": "Megosztva",
-    "Shared articles": "Megosztott cikkek",
-    "Users":"Hasznosítók"
+    "Report a bug" : "Hiba bejelentése"
 },
 "nplurals=2; plural=(n != 1);");

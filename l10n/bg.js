@@ -107,12 +107,6 @@ OC.L10N.register(
     "Help" : "Помощ",
     "Keyboard shortcuts" : "Клавишни комбинации",
     "Documentation" : "Документация",
-    "Report a bug" : "Докладване за грешка",
-    "Contacts" : "Контакти",
-    "Share on social media" : "Споделете в социалните медии",
-    "Contact name" : "Име за контакт",
-    "shared from" : "споделено от",
-    "Shared": "Споделено",
-    "Shared articles": "Споделени статии"
+    "Report a bug" : "Докладване за грешка"
 },
 "nplurals=2; plural=(n != 1);");

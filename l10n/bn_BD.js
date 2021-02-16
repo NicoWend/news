@@ -41,6 +41,12 @@ OC.L10N.register(
     "Error when importing: file does not contain valid JSON" : "আমদানীজণিত সমস্যা: ফাইলের JSON সঠিক নয়",
     "Help" : "সহায়িকা",
     "Keyboard shortcuts" : "কী-বোর্ড শর্টকাট",
-    "Documentation" : "নথিবদ্ধকরণ"
+    "Documentation" : "নথিবদ্ধকরণ",
+    "Contacts" : "যোগাযোগ",
+    "Share on social media" : "সোশ্যাল মিডিয়ায় শেয়ার করুন",
+    "Contact name" : "যোগাযোগের নাম",
+    "shared from" : "থেকে ভাগ",
+    "Shared": "ভাগ করা",
+    "Shared articles": "ভাগ করা নিবন্ধগুলি"
 },
 "nplurals=2; plural=(n != 1);");

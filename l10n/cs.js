@@ -123,6 +123,13 @@ OC.L10N.register(
     "Help" : "Nápověda",
     "Keyboard shortcuts" : "Klávesové zkratky",
     "Documentation" : "Dokumentace",
-    "Report a bug" : "Nahlásit chybu"
+    "Report a bug" : "Nahlásit chybu",
+
+    "Contacts" : "Kontakty",
+    "Share on social media" : "Sdílejte na sociálních médiích",
+    "Contact name" : "Kontaktní jméno",
+    "shared from" : "sdílené z",
+    "Shared": "Sdílené",
+    "Shared articles": "Sdílené články"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n >= 2 && n <= 4 && n % 1 == 0) ? 1: (n % 1 != 0 ) ? 2 : 3;");

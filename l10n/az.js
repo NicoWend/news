@@ -40,6 +40,7 @@ OC.L10N.register(
     "Contact name" :"Əlaqə adı",
     "shared from":"paylaşılan",
     "Shared" : "Paylaşılan",
-    "Shared articles" : "Paylaşılan məqalələr"
+    "Shared articles" : "Paylaşılan məqalələr",
+    "Users":"İstifadəçilər"
 },
 "nplurals=2; plural=(n != 1);");

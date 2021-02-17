@@ -122,6 +122,7 @@ OC.L10N.register(
     "Contact name" : "Jaa sosiaalisessa mediassa",
     "shared from" : "jaettu kohteesta",
     "Shared": "Jaettu",
-    "Shared articles": "Jaetut artikkelit"
+    "Shared articles": "Jaetut artikkelit",
+    "Users":"Käyttäjät"
 },
 "nplurals=2; plural=(n != 1);");

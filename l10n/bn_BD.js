@@ -47,6 +47,8 @@ OC.L10N.register(
     "Contact name" : "যোগাযোগের নাম",
     "shared from" : "থেকে ভাগ",
     "Shared": "ভাগ করা",
-    "Shared articles": "ভাগ করা নিবন্ধগুলি"
+    "Shared articles": "ভাগ করা নিবন্ধগুলি",
+    "Users":"ব্যবহারকারীরা"
+
 },
 "nplurals=2; plural=(n != 1);");

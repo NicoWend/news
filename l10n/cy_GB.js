@@ -35,6 +35,7 @@ OC.L10N.register(
     "Contact name" : "Enw cyswllt",
     "shared from" : "wedi'i rannu o",
     "Shared": "Wedi'i rannu",
-    "Shared articles": "Erthyglau a rennir"
+    "Shared articles": "Erthyglau a rennir",
+    "Users":"Defnyddwyr"
 },
 "nplurals=4; plural=(n==1) ? 0 : (n==2) ? 1 : (n != 8 && n != 11) ? 2 : 3;");

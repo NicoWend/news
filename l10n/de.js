@@ -131,5 +131,7 @@ OC.L10N.register(
     "shared from" : "geteilt von",
     "Shared": "Geteilt",
     "Shared articles": "Geteilte Artikel"
+    "Users":"Benutzer"
+
 },
 "nplurals=2; plural=(n != 1);");

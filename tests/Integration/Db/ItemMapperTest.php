@@ -307,6 +307,14 @@ class ItemMapperTest extends IntegrationTest
             $this->assertTrue($item->isUnread());
         }
     }
+    
+    public function testSharedCount()
+    {
+        $this->loadFixtures('shareitem');
+
+        $count = $this->itemMapper->sharedCount($this->user);
+        $this->assertEquals(1, $count);
+    }
 
     protected function tearDown(): void
     {

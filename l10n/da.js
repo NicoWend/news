@@ -117,7 +117,6 @@ OC.L10N.register(
     "Contact name" : "Kontakt navn",
     "shared from" : "delt fra",
     "Shared": "Delt",
-    "Shared articles": "Delte artikler",
-    "Users":"Brugere"
+    "Shared articles": "Delte artikler"
 },
 "nplurals=2; plural=(n != 1);");

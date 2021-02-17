@@ -102,7 +102,6 @@ OC.L10N.register(
     "Contact name" : "Kontaktisiku nimi",
     "shared from" : "jagatud kasutajalt",
     "Shared": "Jagatud",
-    "Shared articles": "Jagatud artiklid",
-    "Users":"Kasutajad"
+    "Shared articles": "Jagatud artiklid"
 },
 "nplurals=2; plural=(n != 1);");

@@ -56,7 +56,6 @@ OC.L10N.register(
     "Contact name" : "Kontakta nomo",
     "shared from" : "dividita de",
     "Shared": "Kunhavigita",
-    "Shared articles": "Komunaj artikoloj",
-    "Users":"Usuarios"
+    "Shared articles": "Komunaj artikoloj"
 },
 "nplurals=2; plural=(n != 1);");

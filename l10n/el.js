@@ -128,7 +128,6 @@ OC.L10N.register(
     "Contact name" : "Ονομα επαφής",
     "shared from" : "κοινοποιήθηκε από",
     "Shared": "Κοινόχρηστο",
-    "Shared articles": "Κοινόχρηστα άρθρα",
-    "Users":"Χρήστες"
+    "Shared articles": "Κοινόχρηστα άρθρα"
 },
 "nplurals=2; plural=(n != 1);");

@@ -120,7 +120,6 @@ OC.L10N.register(
     "Contact name" : "Harremanetarako Izena",
     "shared from" : "partekatua",
     "Shared": "Partekatua",
-    "Shared articles": "Partekatutako artikuluak",
-    "Users":"Erabiltzaileak"
+    "Shared articles": "Partekatutako artikuluak"
 },
 "nplurals=2; plural=(n != 1);");

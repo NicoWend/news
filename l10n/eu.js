@@ -113,6 +113,13 @@ OC.L10N.register(
     "Help" : "Laguntza",
     "Keyboard shortcuts" : "Teklatuaren lasterbideak",
     "Documentation" : "Dokumentazioa",
-    "Report a bug" : "Jakinarazi errore bat"
+    "Report a bug" : "Jakinarazi errore bat",
+
+    "Contacts" : "Kontaktuak",
+    "Share on social media" : "Partekatu sare sozialetan",
+    "Contact name" : "Harremanetarako Izena",
+    "shared from" : "partekatua",
+    "Shared": "Partekatua",
+    "Shared articles": "Partekatutako artikuluak"
 },
 "nplurals=2; plural=(n != 1);");

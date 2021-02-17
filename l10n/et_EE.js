@@ -95,6 +95,13 @@ OC.L10N.register(
     "Help" : "Abiinfo",
     "Keyboard shortcuts" : "Klaviatuuri otseteed",
     "Documentation" : "Dokumentatsioon",
-    "Report a bug" : "Teata veast"
+    "Report a bug" : "Teata veast",
+
+    "Contacts" : "Kontaktid",
+    "Share on social media" : "Jaga sotsiaalmeedias",
+    "Contact name" : "Kontaktisiku nimi",
+    "shared from" : "jagatud kasutajalt",
+    "Shared": "Jagatud",
+    "Shared articles": "Jagatud artiklid"
 },
 "nplurals=2; plural=(n != 1);");

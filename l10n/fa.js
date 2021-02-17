@@ -112,6 +112,13 @@ OC.L10N.register(
     "Help" : "کمک",
     "Keyboard shortcuts" : "میان بر صفحه ی کلید",
     "Documentation" : "مستندسازی",
-    "Report a bug" : "گزارش یک خطا"
+    "Report a bug" : "گزارش یک خطا",
+
+    "Contacts" : "مخاطب",
+    "Share on social media" : "در شبکه های اجتماعی به اشتراک بگذارید",
+    "Contact name" : "نام مخاطب",
+    "shared from" : "مشترک از",
+    "Shared": "مشترک",
+    "Shared articles": "مقالات مشترک"
 },
 "nplurals=2; plural=(n > 1);");

@@ -115,6 +115,13 @@ OC.L10N.register(
     "Help" : "Ohje",
     "Keyboard shortcuts" : "Pikanäppäimet",
     "Documentation" : "Dokumentaatio",
-    "Report a bug" : "Ilmoita viasta"
+    "Report a bug" : "Ilmoita viasta",
+
+    "Contacts" : "Yhteystiedot",
+    "Share on social media" : "",
+    "Contact name" : "Jaa sosiaalisessa mediassa",
+    "shared from" : "jaettu kohteesta",
+    "Shared": "Jaettu",
+    "Shared articles": "Jaetut artikkelit"
 },
 "nplurals=2; plural=(n != 1);");

@@ -98,6 +98,14 @@ OC.L10N.register(
     "Help" : "Bantuan",
     "Keyboard shortcuts" : "Pintasan keyboard",
     "Documentation" : "Dokumentasi",
-    "Report a bug" : "Laporkan kerusakan"
+    "Report a bug" : "Laporkan kerusakan",
+
+    "Contacts" : "Kenalan",
+    "Share on social media" : "Kongsi di media sosial",
+    "Contact name" : "Nama kenalan",
+    "shared from" : "dikongsi dari",
+    "Shared": "Dikongsi",
+    "Shared articles": "Artikel yang dikongsi",
+    "Utilisateurs":"Pemakai"
 },
 "nplurals=1; plural=0;");

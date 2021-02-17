@@ -18,6 +18,14 @@ OC.L10N.register(
     "Settings" : "Կարգավորումներ",
     "Import" : "Ներմուծում",
     "Export" : "Արտահանում",
-    "Help" : "Օգնություն"
+    "Help" : "Օգնություն",
+
+    "Contacts" : "Կապ",
+    "Share on social media" : "Կիսվեք սոցիալական ցանցերում",
+    "Contact name" : "Կոնտակտային անունը",
+    "shared from" : "կիսվել է",
+    "Shared": "Համօգտագործված",
+    "Shared articles": "Համօգտագործվող հոդվածներ",
+    "Users":"Օգտագործողներ"
 },
 "nplurals=2; plural=(n != 1);");

@@ -112,6 +112,14 @@ OC.L10N.register(
     "Help" : "עזרה",
     "Keyboard shortcuts" : "קיצורי מקלדת",
     "Documentation" : "תיעוד",
-    "Report a bug" : "דיווח על באג"
+    "Report a bug" : "דיווח על באג",
+
+    "Contacts" : "אנשי קשר",
+    "Share on social media" : "שתף ברשתות החברתיות",
+    "Contact name" : "שם איש קשר",
+    "shared from" : "משותף מ",
+    "Shared": "מְשׁוּתָף",
+    "Shared articles": "מאמרים משותפים",
+    "Utilisateurs":"עוזרי עזר"
 },
 "nplurals=4; plural=(n == 1 && n % 1 == 0) ? 0 : (n == 2 && n % 1 == 0) ? 1: (n % 10 == 0 && n % 1 == 0 && n > 10) ? 2 : 3;");

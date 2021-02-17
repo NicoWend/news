@@ -14,6 +14,13 @@ OC.L10N.register(
     "Delete" : "O'chir",
     "Dismiss" : "Tashlab qo'ymang",
     "Settings" : "Sozlamalar",
-    "Help" : "Yordam"
+    "Help" : "Yordam",
+    "Report a bug" : "xato haqida xabar berish",
+    "Contacts" : "kontaktlar",
+    "Share on social media" : "ijtimoiy tarmoqlarda ulush",
+    "Contact name" : "aloqa nomi",
+    "shared from" : "bilan bo'lishdi",
+    "Shared": "birgalikda",
+    "Shared articles": "birgalikda maqolalar"
 },
 "nplurals=1; plural=0;");

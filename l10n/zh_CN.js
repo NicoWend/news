@@ -123,6 +123,13 @@ OC.L10N.register(
     "Help" : "帮助",
     "Keyboard shortcuts" : "快捷键",
     "Documentation" : "文档",
-    "Report a bug" : "报告  "
+    "Report a bug" : "回報問題",
+    "Contacts" : "聯絡人",
+    "Share on social media" : "在社交媒體上分享",
+    "Contact name" : "聯繫人姓名",
+    "shared from" : "共享自",
+    "Shared": "共享",
+    "Shared articles": "共享文章"
+    
 },
 "nplurals=1; plural=0;");

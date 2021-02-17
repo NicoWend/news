@@ -29,7 +29,6 @@ return [
                 ['title' => 'article 3', 'unread' => true],
                 ['title' => 'article 4', 'unread' => true],
                 ['title' => 'article 1', 'unread' => true, 'sharedBy' => 'marco', 'sharedWith' => 'test'],
-                
             ]
         ],
         [
@@ -39,13 +38,6 @@ return [
                 ['title' => 'article 10', 'unread' => true],
                 ['title' => 'article 11', 'unread' => true],
                 ['title' => 'article 10', 'unread' => true, 'sharedBy' => 'aurélien', 'sharedWith' => 'marco'],
-            ]
-        ],
-        [
-            'title' => 'nicolas feed',
-            'userId' => 'nicolas',
-            'items' => [
-                ['title' => 'article 100', 'unread' => true]
             ]
         ]
     ]

@@ -316,6 +316,22 @@ class ItemMapperTest extends IntegrationTest
         $this->assertEquals(1, $count);
     }
 
+    public function testFindAllShared()
+    {
+        $this->loadFixtures('shareitem');
+        $expectedItem = ['title' => 'article 1', 'sharedBy' => 'marco', 'sharedWith' => 'test'];
+
+        $result = $this->itemMapper->findAllShared(10, 0, true, false, $this->user, []);
+
+        // assert that there's only one result 
+        $this->assertEquals(1, count($result));
+
+        // assert that the article is shared with user
+        $this->assertEquals($expectedItem['title'], $result[0]->getTitle());
+        $this->assertEquals($expectedItem['sharedWith'], $result[0]->getSharedWith());
+    }
+
+
     protected function tearDown(): void
     {
         parent::tearDown();

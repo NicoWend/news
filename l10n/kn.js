@@ -18,14 +18,6 @@ OC.L10N.register(
     "Import" : "ಆಮದು",
     "Export" : "ರಫ್ತು",
     "Help" : "﻿ಸಹಾಯ",
-    "Documentation" : "ದಸ್ತಾವೇಜು",
-
-    "Contacts" : "ಸಂಪರ್ಕಗಳು",
-    "Share on social media" : "ಸೋಷಿಯಲ್ ಮೀಡಿಯಾದಲ್ಲಿ ಶೇರ್ ಮಾಡಿ",
-    "Contact name" : "ಸಂಪರ್ಕಿಸುವ ಹೆಸರು",
-    "shared from" : "ನಿಂದ ಹಂಚಿಕೊಳ್ಳಲಾಗಿದೆ",
-    "Shared": "ಹಂಚಿಕೊಳ್ಳಲಾಗಿದೆ",
-    "Shared articles" : "ಲೇಖನಗಳನ್ನು ಹಂಚಲಾಗಿದೆ",
-    "Users" : "អಬಳಕೆದಾರರು"
+    "Documentation" : "ದಸ್ತಾವೇಜು"
 },
 "nplurals=2; plural=(n > 1);");

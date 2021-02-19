@@ -50,14 +50,6 @@ OC.L10N.register(
     "Export" : "Export",
     "Help" : "Hëllef",
     "Documentation" : "Dokumentatioun",
-    "Report a bug" : "E Feeler melden",
-
-    "Contacts" : "Kontakter",
-    "Share on social media" : "Deelen op sozialen Medien",
-    "Contact name" : "Kontakt Numm",
-    "shared from" : "gedeelt vun",
-    "Shared": "Gedeelt",
-    "Shared articles" : "Gedeelt Artikelen",
-    "Users" : "Benotzer"
+    "Report a bug" : "E Feeler melden"
 },
 "nplurals=2; plural=(n != 1);");

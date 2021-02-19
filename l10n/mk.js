@@ -48,14 +48,6 @@ OC.L10N.register(
     "Help" : "Помош",
     "Keyboard shortcuts" : "Кратенки преку тастатура",
     "Documentation" : "Документација",
-    "Report a bug" : "Пријави грешка",
-
-    "Contacts" : "Контакти",
-    "Share on social media" : "Споделете на социјалните мрежи",
-    "Contact name" : "Име за контакт",
-    "shared from" : "споделени од",
-    "Shared": "Заеднички",
-    "Shared articles" : "Споделени статии",
-    "Users" : "Корисници"
+    "Report a bug" : "Пријави грешка"
 },
 "nplurals=2; plural=(n % 10 == 1 && n % 100 != 11) ? 0 : 1;");

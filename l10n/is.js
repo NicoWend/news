@@ -122,14 +122,6 @@ OC.L10N.register(
     "Help" : "Hjálp",
     "Keyboard shortcuts" : "Flýtilyklar",
     "Documentation" : "Hjálparskjöl",
-    "Report a bug" : "Tilkynna um villu",
-
-    "Contacts" : "Tengiliðir",
-    "Share on social media" : "Deildu á samfélagsmiðlum",
-    "Contact name" : "Nafn tengiliðar",
-    "shared from" : "deilt frá",
-    "Shared": "Sameiginleg",
-    "Shared articles" : "Sameiginlegar greinar",
-    "Users" : "Notendur"
+    "Report a bug" : "Tilkynna um villu"
 },
 "nplurals=2; plural=(n % 10 != 1 || n % 100 == 11);");

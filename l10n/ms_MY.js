@@ -19,14 +19,6 @@ OC.L10N.register(
     "Import" : "Import",
     "Export" : "Export",
     "Help" : "Bantuan",
-    "Documentation" : "Dokumentasi",
-
-    "Contacts" : "Kenalan",
-    "Share on social media" : "Kongsi di media sosial",
-    "Contact name" : "Nama kenalan",
-    "shared from" : "dikongsi dari",
-    "Shared": "Dikongsi",
-    "Shared articles" : "Artikel yang dikongsi",
-    "Users" : "Pengguna"
+    "Documentation" : "Dokumentasi"
 },
 "nplurals=1; plural=0;");

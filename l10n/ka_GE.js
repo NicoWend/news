@@ -110,14 +110,6 @@ OC.L10N.register(
     "Help" : "დახმარება",
     "Keyboard shortcuts" : "კლავიატურის კომბინაციები",
     "Documentation" : "დოკუმენტაცია",
-    "Report a bug" : "განაცხადეთ შეცდომა",
-
-    "Contacts" : "კონტაქტები",
-    "Share on social media" : "გააზიარე სოციალურ ქსელში",
-    "Contact name" : "Საკონტაქტო სახელი",
-    "shared from" : "გაიზიარა ეხლა",
-    "Shared": "გაიზიარა",
-    "Shared articles" : "გაზიარებული სტატიები",
-    "Users" : "მომხმარებლები"
+    "Report a bug" : "განაცხადეთ შეცდომა"
 },
 "nplurals=2; plural=(n!=1);");

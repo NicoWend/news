@@ -112,13 +112,6 @@ OC.L10N.register(
     "Help" : "Hjälp",
     "Keyboard shortcuts" : "Tangentbordsgenvägar",
     "Documentation" : "Dokumentation",
-    "Report a bug" : "Rapportera ett problem",
-    "Contacts" : "kontakter",
-    "Share on social media" : "dela på sociala medier",
-    "Contact name": "Kontaktnamn",
-    "shared from":"delas från",
-    "Shared": "delad",
-    "Shared articles": "delade artiklar",
-    "users":"användare"
+    "Report a bug" : "Rapportera ett problem"
 },
 "nplurals=2; plural=(n != 1);");

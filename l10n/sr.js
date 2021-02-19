@@ -123,13 +123,6 @@ OC.L10N.register(
     "Help" : "Помоћ",
     "Keyboard shortcuts" : "Пречице тастатуре",
     "Documentation" : "Документација",
-    "Report a bug" : "Пријави грешку",
-    "Contacts" : "контакти",
-    "Share on social media" : "поделите на друштвеним мрежама",
-    "Contact name": "Контакт Име",
-    "shared from":"дели од",
-    "Shared": "поделио",
-    "Shared articles": "дељени чланци",
-    "users":"корисника"
+    "Report a bug" : "Пријави грешку"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

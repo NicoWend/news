@@ -28,6 +28,14 @@ OC.L10N.register(
     "Export" : "Eksporter",
     "Help" : "Hjelp",
     "Keyboard shortcuts" : "Tastatursnarvegar",
-    "Documentation" : "Dokumentasjon"
+    "Documentation" : "Dokumentasjon",
+    "Contacts" : "kontakter",
+    "Share on social media" : "dela på sociala medier",
+    "Contact name": "Kontaktnamn",
+    "shared from":"delas från",
+    "Shared": "delad",
+    "Shared articles": "delade artiklar",
+    "users":"användare"
+    
 },
 "nplurals=2; plural=(n != 1);");

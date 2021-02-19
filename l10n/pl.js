@@ -123,6 +123,13 @@ OC.L10N.register(
     "Help" : "Pomoc",
     "Keyboard shortcuts" : "Skróty klawiaturowe",
     "Documentation" : "Dokumentacja",
-    "Report a bug" : "Zgłoś błąd"
+    "Report a bug" : "Zgłoś błąd",
+    "Contacts" : "Łączność",
+    "Share on social media" : "udostępniać w mediach społecznościowych",
+    "Contact name": "Nazwa Kontaktu",
+    "shared from":"udostępnione z",
+    "Shared": "udostępniony",
+    "Shared articles": "udostępnione artykuły",
+    "users":"użytkowników"
 },
 "nplurals=4; plural=(n==1 ? 0 : (n%10>=2 && n%10<=4) && (n%100<12 || n%100>14) ? 1 : n!=1 && (n%10>=0 && n%10<=1) || (n%10>=5 && n%10<=9) || (n%100>=12 && n%100<=14) ? 2 : 3);");

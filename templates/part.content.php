@@ -89,19 +89,19 @@
                         </button>
                     </li>
                     <!-- DROPDOWN SHARE -->
-                    <div class="dropdown">
-                        <li ng-click=""
+                    <div class="dropdown"
+                        ng-controller="ShareController as Share">
+                        <li ng-click="Share.toggleDropdown()"
                             class="util"
-                            dropdownToggle
                             news-stop-propagation>
                             <button class="share svg dropbtn"
                                 title="Partager">
                             </button>
                         </li>
                         <div
+                            ng-if="Share.showDropDown"
                             style="margin-top: 2.8em;"
-                            class="dropdown-content"
-                            ng-controller="ShareController as Share">
+                            class="dropdown-content">
                                 <!-- Contact -->
                                 <p class="label-group"><?php p($l->t('Users')) ?></p>
                                 <form ng-submit="" name="contactForm" autocomplete="off">
@@ -133,23 +133,24 @@
                                     ng-click="Share.shareItem(item.id, user.value.shareWith)">
                                     {{ user.value.shareWith }}
                                     <span class="right" style="margin-top: 1.4em; margin-right: 1em"
-                                            ng-class="{'icon-loading-small': App.loading.isLoading(user.value.shareWith)}">
+                                        ng-class="{'icon-loading-small': App.loading.isLoading(user.value.shareWith), 'icon-checkmark': !App.loading.isLoading(user.value.shareWith) && Share.usersSharedArticles[item.id].includes(user.value.shareWith)}">
                                     </span>
-                                    <span ng-if="!App.loading.isLoading(user.value.shareWith)">Envoyé.</span>
                                 </a>
                                 <p class="label-group"> <?php p($l->t('Share on social media')) ?> </p>
                             <div class="row">
                                 <div class="col-4">
-                                    <a class="icon-dropdown icon-facebook pr-5"
-                                       ng-href="https://www.facebook.com/sharer/sharer.php?u={{ ::item.url }}"></a>
+                                    <a target="_blank"
+                                        class="icon-dropdown icon-facebook pr-5"
+                                        ng-href="https://www.facebook.com/sharer/sharer.php?u={{ ::item.url }}"></a>
                                 </div>
                                 <div class="col-4">
-                                    <a class="icon-dropdown icon-twitter pr-5"
-                                       ng-href="https://twitter.com/intent/tweet?url={{ ::item.url }}"></a>
+                                    <a target="_blank"
+                                        class="icon-dropdown icon-twitter pr-5"
+                                        ng-href="https://twitter.com/intent/tweet?url={{ ::item.url }}"></a>
                                 </div>
                                 <div class="col-4">
                                     <a class="icon-dropdown icon-mail pr-5"
-                                       ng-href="mailto:?subject=I wanted you to see this site&amp;body=Check out this site http://www.website.com./{{ ::item.url }}"></a>
+                                        ng-href="mailto:?subject=I wanted you to see this site&amp;body=Check out this site http://www.website.com./{{ ::item.url }}"></a>
                                 </div>
                             </div>
 

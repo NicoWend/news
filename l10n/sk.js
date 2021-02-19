@@ -113,6 +113,13 @@ OC.L10N.register(
     "Help" : "Pomoc",
     "Keyboard shortcuts" : "Klávesové skratky",
     "Documentation" : "Dokumentácia",
-    "Report a bug" : "Nahlásiť chybu"
+    "Report a bug" : "Nahlásiť chybu",
+    "Contacts" : "kontaktet",
+    "Share on social media" : "ndajnë në mediat sociale",
+    "Contact name": "emrin e kontaktit",
+    "shared from":"ndahet nga",
+    "Shared": "të përbashkëta",
+    "Shared articles": "artikuj të përbashkët",
+    "users":"përdoruesit"
 },
 "nplurals=4; plural=(n % 1 == 0 && n == 1 ? 0 : n % 1 == 0 && n >= 2 && n <= 4 ? 1 : n % 1 != 0 ? 2: 3);");

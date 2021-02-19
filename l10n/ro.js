@@ -64,6 +64,13 @@ OC.L10N.register(
     "Help" : "Ajutor",
     "Keyboard shortcuts" : "Scurtături din tastatură",
     "Documentation" : "Documentație",
-    "Report a bug" : "Raportează un defect"
+    "Report a bug" : "Raportează un defect",
+    "Contacts" : "contacte",
+    "Share on social media" : "distribuie pe rețelele de socializare",
+    "Contact name": "nume de contact",
+    "shared from":"partajat de la",
+    "Shared": "impartit",
+    "Shared articles": "articole partajate",
+    "users":"utilizatori"
 },
 "nplurals=3; plural=(n==1?0:(((n%100>19)||((n%100==0)&&(n!=0)))?2:1));");

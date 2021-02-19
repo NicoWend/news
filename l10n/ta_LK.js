@@ -21,6 +21,13 @@ OC.L10N.register(
     "Export" : "ஏற்றுமதி",
     "Help" : "உதவி",
     "Keyboard shortcuts" : "விசைப்பலகை குறுக்குவழிகள்",
-    "Documentation" : "ஆவணமாக்கல்"
+    "Documentation" : "ஆவணமாக்கல்",
+    "Contacts" : "தொடர்புகள்",
+    "Share on social media" : "சமூக ஊடகங்களில் பகிரவும்",
+    "Contact name": "தொடர்பு பெயர்",
+    "shared from":"இருந்து பகிரப்பட்டது",
+    "Shared": "பகிரப்பட்டது",
+    "Shared articles": "பகிரப்பட்ட கட்டுரைகள்",
+    "users":"பயனர்கள்"
 },
 "nplurals=2; plural=(n != 1);");

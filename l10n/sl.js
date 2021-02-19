@@ -117,6 +117,15 @@ OC.L10N.register(
     "Help" : "Pomoč",
     "Keyboard shortcuts" : "Tipkovne bližnjice",
     "Documentation" : "Dokumentacija",
-    "Report a bug" : "Pošlji poročilo o hrošču"
+    "Report a bug" : "Pošlji poročilo o hrošču",
+
+    "Contacts" : "stiki",
+    "Share on social media" : "delite na družbenih omrežjih",
+    "Contact name": "Kontaktno ime",
+    "shared from":"v skupni rabi od",
+    "Shared": "v skupni rabi",
+    "Shared articles": "skupni članki",
+    "users":"uporabnikov"
+
 },
 "nplurals=4; plural=(n%100==1 ? 0 : n%100==2 ? 1 : n%100==3 || n%100==4 ? 2 : 3);");

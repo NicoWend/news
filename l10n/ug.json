@@ -19,6 +19,13 @@
     "Import" : "ئەكىر",
     "Export" : "چىقار",
     "Help" : "ياردەم",
-    "Documentation" : "قوللانما"
+    "Documentation" : "قوللانما",
+    "Contacts" : "ئالاقىداشلار",
+    "Share on social media" : "ئىجتىمائىي تاراتقۇلاردا ھەمبەھىرلىنىش",
+    "Contact name": "ئالاقىلىشىش ئىسمى",
+    "shared from":"ئورتاقلاشتى",
+    "Shared": "ئورتاقلاشتى",
+    "Shared articles": "ھەمبەھىرلەنگەن ماقالىلەر",
+    "users":"ئىشلەتكۈچى"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

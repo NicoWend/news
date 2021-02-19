@@ -113,6 +113,14 @@ OC.L10N.register(
     "Help" : "ヘルプ",
     "Keyboard shortcuts" : "キーボードショートカット",
     "Documentation" : "ドキュメント",
-    "Report a bug" : "バグを報告"
+    "Report a bug" : "バグを報告",
+
+    "Contacts" : "連絡先",
+    "Share on social media" : "ソーシャルメディアで共有する",
+    "Contact name" : "連絡先",
+    "shared from" : "から共有",
+    "Shared": "共有",
+    "Shared articles" : "共有記事",
+    "Users" : "ユーザー"
 },
 "nplurals=1; plural=0;");

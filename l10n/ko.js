@@ -112,6 +112,14 @@ OC.L10N.register(
     "Help" : "도움말",
     "Keyboard shortcuts" : "키보드 단축키",
     "Documentation" : "문서",
-    "Report a bug" : "버그 보고"
+    "Report a bug" : "버그 보고",
+
+    "Contacts" : "콘택트 렌즈",
+    "Share on social media" : "소셜 미디어에 공유",
+    "Contact name" : "담당자 이름",
+    "shared from" : "공유",
+    "Shared": "공유",
+    "Shared articles" : "공유 기사",
+    "Users" : "사용자"
 },
 "nplurals=1; plural=0;");

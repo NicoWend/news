@@ -30,6 +30,14 @@
     "Unread/Starred Articles" : "អត្ថបទ​ដែល​មិន​បាន​អាន ឬ​បាន​ដាក់​ផ្កាយ",
     "Error when importing: file does not contain valid JSON" : "កំហុស​ពេល​នាំ​ចូល៖ ឯកសារ​មិន​មាន JSON ត្រឹម​ត្រូវ",
     "Help" : "ជំនួយ",
-    "Documentation" : "កម្រង​ឯកសារ"
+    "Documentation" : "កម្រង​ឯកសារ",
+
+    "Contacts" : "ទំនាក់ទំនង",
+    "Share on social media" : "ចែករំលែកលើបណ្តាញសង្គម",
+    "Contact name" : "ឈ្មោះ​ទំនាក់ទំនង",
+    "shared from" : "ចែករំលែកពី",
+    "Shared": "បានចែករំលែក",
+    "Shared articles" : "បានចែករំលែកអត្ថបទ",
+    "Users" : "អ្នកប្រើប្រាស់"
 },"pluralForm" :"nplurals=1; plural=0;"
 }

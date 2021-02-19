@@ -63,6 +63,14 @@ OC.L10N.register(
     "Help" : "Palīdzība",
     "Keyboard shortcuts" : "Tastatūras saīsnes",
     "Documentation" : "Dokumentācija",
-    "Report a bug" : "Ziņot par kļūdu"
+    "Report a bug" : "Ziņot par kļūdu",
+
+    "Contacts" : "Kontakti",
+    "Share on social media" : "Dalieties sociālajos tīklos",
+    "Contact name" : "Kontakta vārds",
+    "shared from" : "kopīgoja no",
+    "Shared": "Dalīts",
+    "Shared articles" : "Kopīgi raksti",
+    "Users" : "Lietotāji"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : 2);");

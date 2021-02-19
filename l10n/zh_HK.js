@@ -30,7 +30,6 @@ OC.L10N.register(
     "Contact name" : "連絡先",
     "shared from" : "から共有",
     "Shared": "共有",
-    "Shared articles": "共有記事",
-    "users": "使用者"
+    "Shared articles": "共有記事"
 },
 "nplurals=1; plural=0;");

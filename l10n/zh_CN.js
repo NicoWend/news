@@ -129,9 +129,7 @@ OC.L10N.register(
     "Contact name" : "聯繫人姓名",
     "shared from" : "共享自",
     "Shared": "共享",
-    "Shared articles": "共享文章",
-    "users":"使用者",
-    "users":"使用者"
+    "Shared articles": "共享文章"
     
 },
 "nplurals=1; plural=0;");

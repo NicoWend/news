@@ -45,7 +45,6 @@ OC.L10N.register(
     "Contact name" : "tên Liên lạc",
     "shared from" : "được chia sẻ từ",
     "Shared": "chia sẻ",
-    "Shared articles": "bài chia sẻ",
-    "users":"người dùng"
+    "Shared articles": "bài chia sẻ"
 },
 "nplurals=1; plural=0;");

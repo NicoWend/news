@@ -21,6 +21,7 @@ OC.L10N.register(
     "Contact name" : "aloqa nomi",
     "shared from" : "bilan bo'lishdi",
     "Shared": "birgalikda",
-    "Shared articles": "birgalikda maqolalar"
+    "Shared articles": "birgalikda maqolalar",
+    "users":"foydalanuvchilar"
 },
 "nplurals=1; plural=0;");

@@ -122,13 +122,6 @@ OC.L10N.register(
     "Help" : "Help",
     "Keyboard shortcuts" : "Sneltoetsen",
     "Documentation" : "Documentatie",
-    "Report a bug" : "Rapporteer een fout",
-    "Contacts" : "contacten",
-    "Share on social media" : "delen op sociale media",
-    "Contact name": "contactnaam",
-    "shared from":"gedeeld vanaf",
-    "Shared": "gedeeld",
-    "Shared articles": "gedeelde artikelen",
-    "users":"gebruikers"
+    "Report a bug" : "Rapporteer een fout"
 },
 "nplurals=2; plural=(n != 1);");

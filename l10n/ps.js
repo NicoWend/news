@@ -9,13 +9,6 @@ OC.L10N.register(
     "Rename" : "نوم بدلول",
     "Delete" : "ړنګول",
     "Settings" : "سمونې",
-    "Help" : "مرسته",
-    "Contacts" : "اړیکې",
-    "Share on social media" : "په ټولنیزو رسنیو کې شریک کړئ",
-    "Contact name": "د اړیکې نوم",
-    "shared from":"د",
-    "Shared": "شریک شوی",
-    "Shared articles": "شریک مقالې",
-    "users":"کارونکي"
+    "Help" : "مرسته"
 },
 "nplurals=2; plural=(n != 1);");

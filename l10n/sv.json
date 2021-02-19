@@ -110,6 +110,13 @@
     "Help" : "Hjälp",
     "Keyboard shortcuts" : "Tangentbordsgenvägar",
     "Documentation" : "Dokumentation",
-    "Report a bug" : "Rapportera ett problem"
+    "Report a bug" : "Rapportera ett problem",
+    "Contacts" : "kontakter",
+    "Share on social media" : "dela på sociala medier",
+    "Contact name": "Kontaktnamn",
+    "shared from":"delas från",
+    "Shared": "delad",
+    "Shared articles": "delade artiklar",
+    "users":"användare"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

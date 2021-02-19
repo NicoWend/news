@@ -21,6 +21,13 @@ OC.L10N.register(
     "Settings" : "Postavke",
     "Import" : "Uvezi",
     "Help" : "Help",
-    "Documentation" : "Dokumentacija"
+    "Documentation" : "Dokumentacija",
+    "Contacts" : "stiki",
+    "Share on social media" : "delite na družbenih omrežjih",
+    "Contact name": "Kontaktno ime",
+    "shared from":"v skupni rabi od",
+    "Shared": "v skupni rabi",
+    "Shared articles": "skupni članki",
+    "users":"uporabnikov"
 },
 "nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);");

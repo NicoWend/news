@@ -93,6 +93,13 @@ OC.L10N.register(
     "Help" : "ช่วยเหลือ",
     "Keyboard shortcuts" : "ปุ่มลัด",
     "Documentation" : "เอกสารคู่มือประกอบการใช้งาน",
-    "Report a bug" : "รายงานข้อผิดพลาด"
+    "Report a bug" : "รายงานข้อผิดพลาด",
+    "Contacts" : "ผู้ติดต่อ",
+    "Share on social media" : "แบ่งปันบนโซเชียลมีเดีย",
+    "Contact name": "ชื่อผู้ติดต่อ",
+    "shared from":"แชร์จาก",
+    "Shared": "แชร์",
+    "Shared articles": "บทความที่แบ่งปัน",
+    "users":"ผู้ใช้"
 },
 "nplurals=1; plural=0;");

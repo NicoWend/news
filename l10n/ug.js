@@ -21,14 +21,6 @@ OC.L10N.register(
     "Import" : "ئەكىر",
     "Export" : "چىقار",
     "Help" : "ياردەم",
-    "Documentation" : "قوللانما",
-    "Contacts" : "ئالاقىداشلار",
-    "Share on social media" : "ئىجتىمائىي تاراتقۇلاردا ھەمبەھىرلىنىش",
-    "Contact name": "ئالاقىلىشىش ئىسمى",
-    "shared from":"ئورتاقلاشتى",
-    "Shared": "ئورتاقلاشتى",
-    "Shared articles": "ھەمبەھىرلەنگەن ماقالىلەر",
-    "users":"ئىشلەتكۈچى"
-
+    "Documentation" : "قوللانما"
 },
 "nplurals=2; plural=(n != 1);");

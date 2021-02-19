@@ -123,6 +123,13 @@ OC.L10N.register(
     "Help" : "Yardım",
     "Keyboard shortcuts" : "Tuş takımı kısayolları",
     "Documentation" : "Belgeler",
-    "Report a bug" : "Hata bildirin"
+    "Report a bug" : "Hata bildirin",
+    "Contacts" : "kişiler",
+    "Share on social media" : "sosyal medyada paylaş",
+    "Contact name": "kişi adı",
+    "shared from":"-den paylaşıldı",
+    "Shared": "paylaşılan",
+    "Shared articles": "paylaşılan makaleler",
+    "users":"kullanıcılar"
 },
 "nplurals=2; plural=(n > 1);");

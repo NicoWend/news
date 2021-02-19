@@ -118,6 +118,7 @@ OC.L10N.register(
     "Contact name" : "Nombre de contacto",
     "shared from" : "compartido desde",
     "Shared": "Compartido",
-    "Shared articles": "Artículos compartidos"
+    "Shared articles": "Artículos compartidos",
+    "Users":"Usuarios"
 },
 "nplurals=2; plural=(n != 1);");

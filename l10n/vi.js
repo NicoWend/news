@@ -39,6 +39,13 @@ OC.L10N.register(
     "Help" : "Giúp đỡ",
     "Keyboard shortcuts" : "Phím tắt",
     "Documentation" : "Tài liệu hướng dẫn",
-    "Report a bug" : "Báo cáo lỗi"
+    "Report a bug" : "Báo cáo lỗi",
+    "Contacts" : "liên lạc",
+    "Share on social media" : "chia sẻ trên mạng xã hội",
+    "Contact name" : "tên Liên lạc",
+    "shared from" : "được chia sẻ từ",
+    "Shared": "chia sẻ",
+    "Shared articles": "bài chia sẻ",
+    "users":"người dùng"
 },
 "nplurals=1; plural=0;");

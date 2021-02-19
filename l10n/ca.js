@@ -129,7 +129,8 @@ OC.L10N.register(
     "Contact name" : "Nom de contacte",
     "shared from" : "compartit des de",
     "Shared": "Compartit",
-    "Shared articles": "Articles compartits"
+    "Shared articles": "Articles compartits",
+    "Users":"Usuaris"
 
 
 },

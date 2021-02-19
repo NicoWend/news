@@ -113,6 +113,8 @@ OC.L10N.register(
     "Contact name" : "Име за контакт",
     "shared from" : "споделено от",
     "Shared": "Споделено",
-    "Shared articles": "Споделени статии"
+    "Shared articles": "Споделени статии",
+    "Users":"Потребители"
+
 },
 "nplurals=2; plural=(n != 1);");

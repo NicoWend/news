@@ -119,6 +119,7 @@ OC.L10N.register(
     "Contact name" : "نام مخاطب",
     "shared from" : "مشترک از",
     "Shared": "مشترک",
-    "Shared articles": "مقالات مشترک"
+    "Shared articles": "مقالات مشترک",
+    "Users":"کاربران"
 },
 "nplurals=2; plural=(n > 1);");

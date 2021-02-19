@@ -106,6 +106,6 @@ OC.L10N.register(
     "shared from" : "dikongsi dari",
     "Shared": "Dikongsi",
     "Shared articles": "Artikel yang dikongsi",
-    "Utilisateurs":"Pemakai"
+    "Users":"Pemakai"
 },
 "nplurals=1; plural=0;");

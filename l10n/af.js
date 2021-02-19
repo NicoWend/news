@@ -51,7 +51,9 @@ OC.L10N.register(
     "Contact name" : "Kontak naam",
     "shared from" : "gedeel van",
     "Shared": "Gedeel",
-    "Shared articles": "Gedeelde artikels"
+    "Shared articles": "Gedeelde artikels",
+    "Users":"Gebruikers"
+
 
 },
 "nplurals=2; plural=(n != 1);");

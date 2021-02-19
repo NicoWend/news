@@ -307,11 +307,87 @@ class ItemMapperTest extends IntegrationTest
             $this->assertTrue($item->isUnread());
         }
     }
+    
+    public function testSharedCount()
+    {
+        $this->loadFixtures('shareitem');
+
+        $count = $this->itemMapper->sharedCount($this->user);
+        $this->assertEquals(1, $count);
+    }
+
+    public function testFindAllShared()
+    {
+        $this->loadFixtures('shareitem');
+        $expectedItem = ['title' => 'article 1', 'sharedBy' => 'marco', 'sharedWith' => 'test'];
+
+        $result = $this->itemMapper->findAllShared(10, 0, true, false, $this->user, []);
+
+        // assert that there's only one result 
+        $this->assertEquals(1, count($result));
+
+        // assert that the article is shared with user
+        $this->assertEquals($expectedItem['title'], $result[0]->getTitle());
+        $this->assertEquals($expectedItem['sharedWith'], $result[0]->getSharedWith());
+    }
+
+    public function testShareItem()
+    {
+        $userId = 'nicolas';
+        $itemTitle = 'article 200';
+        $userSharedWith = 'jimmy';
+
+        $this->loadFixtures('shareitem');
+
+        // assert that all items are not shared
+        $feed = $this->feedMapper->where(['userId' => $userId])[0];
+        $items = $this->itemMapper->where(['feedId' => $feed->getId()]);
+
+        var_dump(count($items));
+
+        foreach ($items as $item) {
+            var_dump($item->getTitle());
+            $this->assertEquals('', $item->getSharedBy());
+            $this->assertEquals('', $item->getSharedWith());
+        }
+
+        // Share an item 
+        $duplicateItem = $this->itemMapper->where(['feedId' => $feed->getId(), 'title' => $itemTitle])[0];
+        $this->itemMapper->shareItem($duplicateItem->getId(), $userSharedWith, $userId);
+
+        // assert that only the selected item has been shared
+        $items = $this->itemMapper->where(['feedId' => $feed->getId()]);
+        foreach ($items as $item) {
+            if ($item->getId() !== $duplicateItem->getId() &&
+                $item->getTitle() === $duplicateItem->getTitle()
+            ) { 
+                $this->assertEquals($userId, $item->getSharedBy());
+                $this->assertEquals($userSharedWith, $item->getSharedWith());
+            } else {
+                $this->assertEquals('', $item->getSharedBy());
+                $this->assertEquals('', $item->getSharedWith());
+            }
+        }
+
+        // assert that other user's same items stayed the same 
+        $usersFeed = $this->feedMapper->where(['userId' => $userSharedWith])[0];
+        $items = $this->itemMapper->where(['feedId' => $usersFeed->getId()]);
+        foreach ($items as $item) {
+            $this->assertEquals('', $item->getSharedby());
+            $this->assertEquals('', $item->getSharedWith());
+        }
+    }
+
+
 
     protected function tearDown(): void
     {
         parent::tearDown();
         $this->clearUserNewsDatabase('john');
+        $this->clearUserNewsDatabase('nicolas');
+        $this->clearUserNewsDatabase('aurélien');
+        $this->clearUserNewsDatabase('marco');
+        $this->clearUserNewsDatabase('jimmy');
     }
 
 }

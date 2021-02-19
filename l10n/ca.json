@@ -126,6 +126,7 @@
     "Contact name" : "Nom de contacte",
     "shared from" : "compartit des de",
     "Shared": "Compartit",
-    "Shared articles": "Articles compartits"
+    "Shared articles": "Articles compartits",
+    "Users":"Usuaris"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

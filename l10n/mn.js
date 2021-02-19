@@ -45,6 +45,14 @@ OC.L10N.register(
     "Settings" : "Тохиргоо",
     "Import" : "Импорт",
     "Export" : "Экспорт",
-    "Help" : "Туслах"
+    "Help" : "Туслах",
+
+    "Contacts" : "Харилцагчид",
+    "Share on social media" : "Олон нийтийн мэдээллийн хэрэгслээр хуваалцах",
+    "Contact name" : "Холбоо барих нэр",
+    "shared from" : "хуваалцсан",
+    "Shared": "Хуваалцсан",
+    "Shared articles" : "Хуваалцсан нийтлэлүүд",
+    "Users" : "Хэрэглэгчид"
 },
 "nplurals=2; plural=(n != 1);");

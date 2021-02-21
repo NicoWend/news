@@ -13,10 +13,7 @@
 
 namespace OCA\News\Config;
 
-use OCA\News\AppInfo\Application;
-use OCA\News\Utility\PsrLogger;
 use OCP\Files\Folder;
-use OCP\IConfig;
 use Psr\Log\LoggerInterface;
 
 class LegacyConfig
@@ -54,7 +51,12 @@ class LegacyConfig
         $this->updateInterval = 3600;
     }
 
-    public function read($configPath, $createIfNotExists = false)
+    /**
+     * @param false $createIfNotExists
+     *
+     * @return void
+     */
+    public function read($configPath, bool $createIfNotExists = false)
     {
         if ($this->fileSystem === null) {
             return;

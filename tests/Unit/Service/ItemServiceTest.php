@@ -13,73 +13,61 @@
 
 namespace OCA\News\Tests\Unit\Service;
 
-use OC\Log;
-use OCA\News\Db\ItemMapper;
-use OCA\News\Service\ItemService;
+use OCA\News\Db\ItemMapperV2;
+use OCA\News\Service\Exceptions\ServiceConflictException;
+use OCA\News\Service\Exceptions\ServiceValidationException;
 use OCA\News\Service\Exceptions\ServiceNotFoundException;
-use OCA\News\Utility\PsrLogger;
-use OCA\News\Utility\Time;
+use OCA\News\Service\ItemServiceV2;
 use \OCP\AppFramework\Db\DoesNotExistException;
 
 use \OCA\News\Db\Item;
-use \OCA\News\Db\FeedType;
+use \OCA\News\Db\ListType;
+use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\IConfig;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-
+/**
+ * Class ItemServiceTest
+ *
+ * @package OCA\News\Tests\Unit\Service
+ */
 class ItemServiceTest extends TestCase
 {
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|ItemMapper
+     * @var MockObject|ItemMapperV2
      */
     private $mapper;
     /**
-     * @var  ItemService
+     * @var  ItemServiceV2
      */
-    private $itemService;
+    private $class;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|IConfig
+     * @var MockObject|IConfig
      */
     private $config;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|LoggerInterface
+     * @var MockObject|LoggerInterface
      */
     private $logger;
-
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|Time
-     */
-    private $timeFactory;
-
     /**
      * @var int
      */
     private $newestItemId;
-
     /**
      * @var string
      */
-    private $time;
+    private $user;
 
 
     protected function setUp(): void
     {
-        $this->time = '222';
-        $this->timeFactory = $this->getMockBuilder(Time::class)
-            ->disableOriginalConstructor()
-            ->getMock();
-        $this->timeFactory->expects($this->any())
-            ->method('getTime')
-            ->will($this->returnValue($this->time));
-        $this->timeFactory->expects($this->any())
-            ->method('getMicroTime')
-            ->will($this->returnValue($this->time));
-        $this->mapper = $this->getMockBuilder(ItemMapper::class)
+        $this->mapper = $this->getMockBuilder(ItemMapperV2::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->config = $this->getMockBuilder(IConfig::class)
@@ -90,9 +78,8 @@ class ItemServiceTest extends TestCase
             ->disableOriginalConstructor()
             ->getMock();
 
-        $this->itemService = new ItemService(
+        $this->class = new ItemServiceV2(
             $this->mapper,
-            $this->timeFactory,
             $this->config,
             $this->logger
         );
@@ -105,111 +92,87 @@ class ItemServiceTest extends TestCase
         $this->newestItemId = 4;
     }
 
-
     public function testFindAllNewFeed()
     {
-        $type = FeedType::FEED;
         $this->mapper->expects($this->once())
-            ->method('findAllNewFeed')
-            ->with(
-                $this->equalTo(3),
-                $this->equalTo(20333),
-                $this->equalTo(true),
-                $this->equalTo('jack')
-            )
+            ->method('findAllInFeedAfter')
+            ->with('jack', 2, 20333, true)
             ->will($this->returnValue([]));
 
-        $result = $this->itemService->findAllNew(3, $type, 20333, true, 'jack');
+        $result = $this->class->findAllInFeedAfter($this->user, 2, 20333, true);
         $this->assertEquals([], $result);
     }
 
-
     public function testFindAllNewFolder()
     {
-        $type = FeedType::FOLDER;
         $this->mapper->expects($this->once())
-            ->method('findAllNewFolder')
-            ->with(
-                $this->equalTo(3),
-                $this->equalTo(20333),
-                $this->equalTo(true),
-                $this->equalTo('jack')
-            )
-            ->will($this->returnValue(['val']));
+            ->method('findAllInFolderAfter')
+            ->with('jack', 2, 20333, true)
+            ->will($this->returnValue([]));
 
-        $result = $this->itemService->findAllNew(3, $type, 20333, true, 'jack');
-        $this->assertEquals(['val'], $result);
+        $result = $this->class->findAllInFolderAfter($this->user, 2, 20333, true);
+        $this->assertEquals([], $result);
     }
 
-
-    public function testFindAllNew()
+    public function testFindAllNewItem()
     {
-        $type = FeedType::STARRED;
         $this->mapper->expects($this->once())
-            ->method('findAllNew')
-            ->with(
-                $this->equalTo(20333),
-                $this->equalTo($type),
-                $this->equalTo(true),
-                $this->equalTo('jack')
-            )
-            ->will($this->returnValue(['val']));
+            ->method('findAllAfter')
+            ->with('jack', 2, 20333)
+            ->will($this->returnValue([]));
 
-        $result = $this->itemService->findAllNew(
-            3, $type, 20333, true,
-            'jack'
-        );
-        $this->assertEquals(['val'], $result);
+        $result = $this->class->findAllAfter($this->user, 2, 20333);
+        $this->assertEquals([], $result);
     }
 
+    public function testFindAllNewItemWrongType()
+    {
+        $this->expectException(ServiceValidationException::class);
+        $this->expectExceptionMessage('Trying to find in unknown type');
+
+        $this->mapper->expects($this->never())
+            ->method('findAllAfter');
+
+        $result = $this->class->findAllAfter($this->user, 5, 20333);
+        $this->assertEquals([], $result);
+    }
 
     public function testFindAllFeed()
     {
-        $type = FeedType::FEED;
         $this->mapper->expects($this->once())
             ->method('findAllFeed')
-            ->with(
-                $this->equalTo(3),
-                $this->equalTo(20),
-                $this->equalTo(5),
-                $this->equalTo(true),
-                $this->equalTo(false),
-                $this->equalTo('jack'),
-                $this->equalTo([])
-            )
+            ->with('jack', 3, 20, 5, true, false, [])
             ->will($this->returnValue(['val']));
 
-        $result = $this->itemService->findAllItems(
-            3, $type, 20, 5,
-            true, false, 'jack'
+        $result = $this->class->findAllInFeedWithFilters(
+            'jack',
+            3,
+            20,
+            5,
+            true,
+            false
         );
         $this->assertEquals(['val'], $result);
     }
-
 
     public function testFindAllFolder()
     {
-        $type = FeedType::FOLDER;
         $this->mapper->expects($this->once())
             ->method('findAllFolder')
-            ->with(
-                $this->equalTo(3),
-                $this->equalTo(20),
-                $this->equalTo(5),
-                $this->equalTo(true),
-                $this->equalTo(true),
-                $this->equalTo('jack'),
-                $this->equalTo([])
-            )
+            ->with('jack', 3, 20, 5, true, true, [])
             ->will($this->returnValue(['val']));
 
-        $result = $this->itemService->findAllItems(
-            3, $type, 20, 5,
-            true, true, 'jack'
+        $result = $this->class->findAllInFolderWithFilters(
+            'jack',
+            3,
+            20,
+            5,
+            true,
+            true,
+            []
         );
         $this->assertEquals(['val'], $result);
     }
-
 
     public function testFindAllShared()
     {
@@ -234,91 +197,70 @@ class ItemServiceTest extends TestCase
     }
 
 
-    public function testFindAll()
+    public function testFindAllItems()
     {
-        $type = FeedType::STARRED;
+        $type = ListType::STARRED;
         $this->mapper->expects($this->once())
             ->method('findAllItems')
-            ->with(
-                $this->equalTo(20),
-                $this->equalTo(5),
-                $this->equalTo($type),
-                $this->equalTo(true),
-                $this->equalTo(true),
-                $this->equalTo('jack'),
-                $this->equalTo([])
-            )
+            ->with('jack', $type, 20, 5, true, [])
             ->will($this->returnValue(['val']));
 
-        $result = $this->itemService->findAllItems(
-            3, $type, 20, 5,
-            true, true, 'jack'
-        );
+        $result = $this->class->findAllWithFilters('jack', $type, 20, 5, true);
         $this->assertEquals(['val'], $result);
     }
-
 
     public function testFindAllSearch()
     {
-        $type = FeedType::STARRED;
+        $type = ListType::STARRED;
         $search = ['test'];
+
 
         $this->mapper->expects($this->once())
             ->method('findAllItems')
-            ->with(
-                $this->equalTo(20),
-                $this->equalTo(5),
-                $this->equalTo($type),
-                $this->equalTo(true),
-                $this->equalTo(true),
-                $this->equalTo('jack'),
-                $this->equalTo($search)
-            )
+            ->with('jack', $type, 20, 5, true, $search)
             ->will($this->returnValue(['val']));
 
-        $result = $this->itemService->findAllItems(
-            3, $type, 20, 5,
-            true, true, 'jack', $search
-        );
+        $result = $this->class->findAllWithFilters('jack', $type, 20, 5, true, $search);
         $this->assertEquals(['val'], $result);
     }
 
+    public function testFindAll()
+    {
+        $this->mapper->expects($this->once())
+            ->method('findAll')
+            ->will($this->returnValue(['val']));
 
+        $result = $this->class->findAll();
+        $this->assertEquals(['val'], $result);
+    }
 
-    public function testStar()
+    public function testStarByGuid()
     {
         $itemId = 3;
         $feedId = 5;
         $guidHash = md5('hihi');
 
         $item = new Item();
-        $item->setStatus(128);
         $item->setId($itemId);
         $item->setStarred(false);
 
         $expectedItem = new Item();
-        $expectedItem->setStatus(128);
         $expectedItem->setStarred(true);
         $expectedItem->setId($itemId);
 
         $this->mapper->expects($this->once())
-            ->method('findByGuidHash')
-            ->with(
-                $this->equalTo($guidHash),
-                $this->equalTo($feedId),
-                $this->equalTo('jack')
-            )
+            ->method('findForUserByGuidHash')
+            ->with('jack', $feedId, $guidHash)
             ->will($this->returnValue($item));
 
         $this->mapper->expects($this->once())
             ->method('update')
             ->with($this->equalTo($expectedItem));
 
-        $this->itemService->star($feedId, $guidHash, true, 'jack');
+        $this->class->starByGuid('jack', $feedId, $guidHash, true);
 
         $this->assertTrue($item->isStarred());
     }
-
 
     public function testUnstar()
     {
@@ -327,84 +269,93 @@ class ItemServiceTest extends TestCase
         $guidHash = md5('hihi');
 
         $item = new Item();
-        $item->setStatus(128);
         $item->setId($itemId);
         $item->setStarred(true);
 
         $expectedItem = new Item();
-        $expectedItem->setStatus(128);
         $expectedItem->setStarred(true); //workaround to set starred as updated field
         $expectedItem->setStarred(false);
         $expectedItem->setId($itemId);
 
         $this->mapper->expects($this->once())
-            ->method('findByGuidHash')
-            ->with(
-                $this->equalTo($guidHash),
-                $this->equalTo($feedId),
-                $this->equalTo('jack')
-            )
+            ->method('findForUserByGuidHash')
+            ->with('jack', $feedId, $guidHash)
             ->will($this->returnValue($item));
 
         $this->mapper->expects($this->once())
             ->method('update')
             ->with($this->equalTo($expectedItem));
 
-        $this->itemService->star($feedId, $guidHash, false, 'jack');
+        $this->class->starByGuid('jack', $feedId, $guidHash, false);
 
         $this->assertFalse($item->isStarred());
     }
 
     public function testRead()
     {
-        $itemId = 3;
-        $item = new Item();
-        $item->setStatus(128);
-        $item->setId($itemId);
-        $item->setUnread(true);
+        $item = $this->getMockBuilder(Item::class)
+                     ->getMock();
 
-        $expectedItem = new Item();
-        $expectedItem->setStatus(128);
-        $expectedItem->setUnread(false);
-        $expectedItem->setId($itemId);
-        $expectedItem->setLastModified($this->time);
+        $item->expects($this->once())
+             ->method('setUnread')
+             ->with(false);
 
         $this->mapper->expects($this->once())
-            ->method('readItem')
-            ->with(
-                $this->equalTo($itemId),
-                $this->equalTo(true),
-                $this->equalTo($this->time),
-                $this->equalTo('jack')
-            )
+            ->method('findFromUser')
+            ->with('jack', 3)
             ->will($this->returnValue($item));
 
-        $this->itemService->read($itemId, true, 'jack');
+        $this->mapper->expects($this->once())
+            ->method('update')
+            ->with($item)
+            ->will($this->returnValue($item));
+
+        $this->class->read('jack', 3, true);
     }
 
+    public function testStar()
+    {
+        $item = $this->getMockBuilder(Item::class)
+                     ->getMock();
 
-    public function testReadDoesNotExist()
+        $item->expects($this->once())
+             ->method('setStarred')
+             ->with(true);
+
+        $this->mapper->expects($this->once())
+            ->method('findFromUser')
+            ->with('jack', 3)
+            ->will($this->returnValue($item));
+
+        $this->mapper->expects($this->once())
+            ->method('update')
+            ->with($item)
+            ->will($this->returnValue($item));
+
+        $this->class->star('jack', 3, true);
+    }
+
+    public function testStarByGuidDoesNotExist()
     {
 
         $this->expectException(ServiceNotFoundException::class);
         $this->mapper->expects($this->once())
-            ->method('readItem')
+            ->method('findForUserByGuidHash')
             ->will($this->throwException(new DoesNotExistException('')));
 
-        $this->itemService->read(1, true, 'jack');
+        $this->class->starByGuid('jack', 1, 'hash', true);
     }
 
-    public function testStarDoesNotExist()
+    public function testStarByGuidDuplicate()
     {
 
-        $this->expectException(ServiceNotFoundException::class);
+        $this->expectException(ServiceConflictException::class);
         $this->mapper->expects($this->once())
-            ->method('findByGuidHash')
-            ->will($this->throwException(new DoesNotExistException('')));
+            ->method('findForUserByGuidHash')
+            ->will($this->throwException(new MultipleObjectsReturnedException('')));
 
-        $this->itemService->star(1, 'hash', true, 'jack');
+        $this->class->starByGuid('jack', 1, 'hash', true);
     }
-
 
     public function testReadAll()
     {
@@ -412,94 +363,26 @@ class ItemServiceTest extends TestCase
 
         $this->mapper->expects($this->once())
             ->method('readAll')
-            ->with(
-                $this->equalTo($highestItemId),
-                $this->equalTo($this->time),
-                $this->equalTo('jack')
-            );
+            ->with('jack', $highestItemId);
 
-        $this->itemService->readAll($highestItemId, 'jack');
+        $this->class->readAll('jack', $highestItemId);
     }
-
-
-    public function testReadFolder()
-    {
-        $folderId = 3;
-        $highestItemId = 6;
-
-        $this->mapper->expects($this->once())
-            ->method('readFolder')
-            ->with(
-                $this->equalTo($folderId),
-                $this->equalTo($highestItemId),
-                $this->equalTo($this->time),
-                $this->equalTo('jack')
-            );
-
-        $this->itemService->readFolder($folderId, $highestItemId, 'jack');
-    }
-
-
-    public function testReadFeed()
-    {
-        $feedId = 3;
-        $highestItemId = 6;
-
-        $this->mapper->expects($this->once())
-            ->method('readFeed')
-            ->with(
-                $this->equalTo($feedId),
-                $this->equalTo($highestItemId),
-                $this->equalTo($this->time),
-                $this->equalTo('jack')
-            );
-
-        $this->itemService->readFeed($feedId, $highestItemId, 'jack');
-    }
-
-
-    public function testAutoPurgeOldWillPurgeOld()
-    {
-        $this->config->expects($this->once())
-            ->method('getAppValue')
-            ->with('news', 'autoPurgeCount')
-            ->will($this->returnValue(2));
-        $this->mapper->expects($this->once())
-            ->method('deleteReadOlderThanThreshold')
-            ->with($this->equalTo(2));
-
-        $this->itemService->autoPurgeOld();
-    }
-
-    public function testAutoPurgeOldWontPurgeOld()
-    {
-        $this->config->expects($this->once())
-            ->method('getAppValue')
-            ->with('news', 'autoPurgeCount')
-            ->will($this->returnValue(-1));
-        $this->mapper->expects($this->never())
-            ->method('deleteReadOlderThanThreshold');
-
-        $this->itemService->autoPurgeOld();
-    }
-
 
     public function testGetNewestItemId()
     {
         $this->mapper->expects($this->once())
-            ->method('getNewestItemId')
+            ->method('newest')
             ->with($this->equalTo('jack'))
-            ->will($this->returnValue(12));
+            ->will($this->returnValue(Item::fromParams(['id' => 12])));
 
-        $result = $this->itemService->getNewestItemId('jack');
-        $this->assertEquals(12, $result);
+        $result = $this->class->newest('jack');
+        $this->assertEquals(12, $result->getId());
     }
-
 
     public function testGetNewestItemIdDoesNotExist()
     {
         $this->mapper->expects($this->once())
-            ->method('getNewestItemId')
+            ->method('newest')
             ->with($this->equalTo('jack'))
             ->will(
                 $this->throwException(
@@ -508,49 +391,267 @@ class ItemServiceTest extends TestCase
             );
 
         $this->expectException(ServiceNotFoundException::class);
-        $this->itemService->getNewestItemId('jack');
+        $this->class->newest('jack');
     }
 
+    public function testGetNewestItemDuplicate()
+    {
+        $this->mapper->expects($this->once())
+            ->method('newest')
+            ->with($this->equalTo('jack'))
+            ->will(
+                $this->throwException(
+                    new MultipleObjectsReturnedException('There are no items')
+                )
+            );
+
+        $this->expectException(ServiceConflictException::class);
+        $this->class->newest('jack');
+    }
 
     public function testStarredCount()
     {
-        $star = 18;
-
         $this->mapper->expects($this->once())
-            ->method('starredCount')
-            ->with($this->equalTo('jack'))
-            ->will($this->returnValue($star));
+            ->method('findAllFromUser')
+            ->with('jack', ['starred' => 1])
+            ->will($this->returnValue([new Item(), new Item()]));
 
-        $result = $this->itemService->starredCount('jack');
+        $result = $this->class->starred('jack');
 
-        $this->assertEquals($star, $result);
+        $this->assertEquals(2, count($result));
     }
 
-
-    public function testGetUnreadOrStarred()
+    public function testInsertOrUpdateInserts()
     {
-        $star = 18;
+        $item = $this->getMockBuilder(Item::class)
+                     ->getMock();
+
+        $item->expects($this->once())
+             ->method('getFeedId')
+             ->will($this->returnValue(1));
+
+        $item->expects($this->once())
+             ->method('getGuidHash')
+             ->will($this->returnValue('hash'));
 
         $this->mapper->expects($this->once())
-            ->method('findAllUnreadOrStarred')
-            ->with($this->equalTo('jack'))
-            ->will($this->returnValue($star));
+            ->method('findByGuidHash')
+            ->with(1, 'hash')
+            ->will($this->throwException(new DoesNotExistException('exception')));
 
-        $result = $this->itemService->getUnreadOrStarred('jack');
+        $this->mapper->expects($this->once())
+            ->method('insert')
+            ->with($item)
+            ->will($this->returnValue($item));
 
-        $this->assertEquals($star, $result);
+        $result = $this->class->insertOrUpdate($item);
+
+        $this->assertEquals($item, $result);
     }
 
+    public function testInsertOrUpdateUpdates()
+    {
+        $item = $this->getMockBuilder(Item::class)
+                     ->getMock();
+        $db_item = $this->getMockBuilder(Item::class)
+                     ->getMock();
 
-    public function testDeleteUser()
+        $item->expects($this->once())
+             ->method('getFeedId')
+             ->will($this->returnValue(1));
+
+        $item->expects($this->once())
+             ->method('getGuidHash')
+             ->will($this->returnValue('hash'));
+
+        $item->expects($this->once())
+             ->method('setUnread')
+             ->with(true)
+             ->will($this->returnSelf());
+
+        $db_item->expects($this->once())
+                ->method('isUnread')
+                ->will($this->returnValue(true));
+
+        $item->expects($this->once())
+             ->method('setStarred')
+             ->with(true)
+            ->will($this->returnSelf());
+
+        $db_item->expects($this->once())
+                ->method('isStarred')
+                ->will($this->returnValue(true));
+
+        $item->expects($this->once())
+            ->method('generateSearchIndex')
+            ->will($this->returnSelf());
+
+        $item->expects($this->once())
+            ->method('getFingerprint')
+            ->will($this->returnValue('fingerA'));
+
+        $db_item->expects($this->once())
+            ->method('getFingerprint')
+            ->will($this->returnValue('fingerB'));
+
+        $item->expects($this->never())
+            ->method('resetUpdatedFields');
+
+        $this->mapper->expects($this->once())
+            ->method('findByGuidHash')
+            ->with(1, 'hash')
+            ->will($this->returnValue($db_item));
+
+        $this->mapper->expects($this->once())
+            ->method('update')
+            ->with($item)
+            ->will($this->returnValue($item));
+
+        $result = $this->class->insertOrUpdate($item);
+
+        $this->assertEquals($item, $result);
+    }
+
+    public function testInsertOrUpdateSkipsSame()
+    {
+        $item = $this->getMockBuilder(Item::class)
+                     ->getMock();
+        $db_item = $this->getMockBuilder(Item::class)
+                     ->getMock();
+
+        $item->expects($this->once())
+             ->method('getFeedId')
+             ->will($this->returnValue(1));
+
+        $item->expects($this->once())
+             ->method('getGuidHash')
+             ->will($this->returnValue('hash'));
+
+        $item->expects($this->once())
+             ->method('setUnread')
+             ->with(true)
+             ->will($this->returnSelf());
+
+        $db_item->expects($this->once())
+                ->method('isUnread')
+                ->will($this->returnValue(true));
+
+        $item->expects($this->once())
+             ->method('setStarred')
+             ->with(true)
+            ->will($this->returnSelf());
+
+        $db_item->expects($this->once())
+                ->method('isStarred')
+                ->will($this->returnValue(true));
+
+        $item->expects($this->once())
+            ->method('generateSearchIndex')
+            ->will($this->returnSelf());
+
+        $item->expects($this->once())
+            ->method('getFingerprint')
+            ->will($this->returnValue('fingerA'));
+
+        $db_item->expects($this->once())
+            ->method('getFingerprint')
+            ->will($this->returnValue('fingerA'));
+
+        $item->expects($this->once())
+            ->method('resetUpdatedFields');
+
+        $this->mapper->expects($this->once())
+            ->method('findByGuidHash')
+            ->with(1, 'hash')
+            ->will($this->returnValue($db_item));
+
+        $this->mapper->expects($this->once())
+            ->method('update')
+            ->with($item)
+            ->will($this->returnValue($item));
+
+        $result = $this->class->insertOrUpdate($item);
+
+        $this->assertEquals($item, $result);
+    }
+
+    public function testFindByGuidHash()
+    {
+        $item = $this->getMockBuilder(Item::class)
+                     ->getMock();
+
+        $this->mapper->expects($this->once())
+            ->method('findByGuidHash')
+            ->with(1, 'a')
+            ->will($this->returnValue($item));
+
+        $result = $this->class->findByGuidHash(1, 'a');
+
+        $this->assertEquals($item, $result);
+    }
+
+    public function testFindAllInFeed()
+    {
+        $items = [new Item(), new Item()];
+
+        $this->mapper->expects($this->once())
+            ->method('findAllInFeedAfter')
+            ->with('jack', 1, PHP_INT_MIN, false)
+            ->will($this->returnValue($items));
+
+        $result = $this->class->findAllInFeed('jack', 1);
+
+        $this->assertEquals($items, $result);
+    }
+
+    public function testPurgeOverThreshold()
     {
         $this->mapper->expects($this->once())
-            ->method('deleteUser')
-            ->will($this->returnValue('jack'));
+            ->method('deleteOverThreshold')
+            ->with(1, true)
+            ->will($this->returnValue(1));
 
-        $this->itemService->deleteUser('jack');
+        $result = $this->class->purgeOverThreshold(1, true);
+
+        $this->assertEquals(1, $result);
     }
 
+    public function testPurgeOverThresholdWithNegative()
+    {
+        $this->mapper->expects($this->never())
+            ->method('deleteOverThreshold');
+
+        $result = $this->class->purgeOverThreshold(-1, true);
+
+        $this->assertEquals(null, $result);
+    }
+
+    public function testPurgeOverThresholdNull()
+    {
+        $this->config->expects($this->once())
+            ->method('getAppValue')
+            ->with('news', 'autoPurgeCount', 200)
+            ->will($this->returnValue(200));
+
+        $this->mapper->expects($this->once())
+            ->method('deleteOverThreshold')
+            ->with(200);
+
+        $this->class->purgeOverThreshold();
+    }
+
+    public function testPurgeOverThresholdSet()
+    {
+        $this->config->expects($this->never())
+            ->method('getAppValue')
+            ->with('news', 'autoPurgeCount', 200);
+
+        $this->mapper->expects($this->once())
+            ->method('deleteOverThreshold')
+            ->with(5);
+
+        $this->class->purgeOverThreshold(5);
+    }
 
     public function testShareItem()
     {

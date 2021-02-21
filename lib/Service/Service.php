@@ -13,8 +13,8 @@
 
 namespace OCA\News\Service;
 
-use OCA\News\Db\NewsMapper;
 use OCA\News\Db\NewsMapperV2;
+use OCA\News\Service\Exceptions\ServiceConflictException;
 use OCA\News\Service\Exceptions\ServiceNotFoundException;
 use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\Entity;
@@ -29,7 +29,7 @@ use Psr\Log\LoggerInterface;
 abstract class Service
 {
     /**
-     * @var NewsMapper|NewsMapperV2
+     * @var NewsMapperV2
      */
     protected $mapper;
     /**
@@ -40,10 +40,10 @@ abstract class Service
     /**
      * Service constructor.
      *
-     * @param NewsMapper|NewsMapperV2 $mapper
-     * @param LoggerInterface         $logger
+     * @param NewsMapperV2    $mapper
+     * @param LoggerInterface $logger
      */
-    public function __construct($mapper, LoggerInterface $logger)
+    public function __construct(NewsMapperV2 $mapper, LoggerInterface $logger)
     {
         $this->mapper = $mapper;
         $this->logger = $logger;
@@ -66,21 +66,49 @@ abstract class Service
      */
     abstract public function findAll(): array;
 
-
     /**
      * Delete an entity
      *
      * @param int    $id     the id of the entity
      * @param string $userId the name of the user for security reasons
      *
-     * @throws ServiceNotFoundException if the entity does not exist, or there
+     * @throws ServiceNotFoundException|ServiceConflictException if the entity does not exist, or there
      * are more than one of it
      */
-    public function delete(string $userId, int $id)
+    public function delete(string $userId, int $id): Entity
     {
         $entity = $this->find($userId, $id);
 
-        $this->mapper->delete($entity);
+        return $this->mapper->delete($entity);
+    }
+
+
+    /**
+     * Insert an entity
+     *
+     * @param Entity $entity The entity to insert
+     *
+     * @return Entity The inserted entity
+     */
+    public function insert(Entity $entity): Entity
+    {
+        return $this->mapper->insert($entity);
+    }
+
+
+    /**
+     * Update an entity
+     *
+     * @param string $userId the name of the user for security reasons
+     * @param Entity $entity the entity
+     *
+     * @throws ServiceNotFoundException|ServiceConflictException if the entity does not exist, or there
+     * are more than one of it
+     */
+    public function update(string $userId, Entity $entity): Entity
+    {
+        $this->find($userId, $entity->getId());
+        return $this->mapper->update($entity);
     }
 
 
@@ -91,17 +119,30 @@ abstract class Service
      * @param string $userId the name of the user for security reasons
      *
      * @return Entity the entity
-     * @throws ServiceNotFoundException if the entity does not exist, or there
+     * @throws ServiceNotFoundException|ServiceConflictException if the entity does not exist, or there
      * are more than one of it
      */
     public function find(string $userId, int $id): Entity
     {
         try {
-            return $this->mapper->find($userId, $id);
+            return $this->mapper->findFromUser($userId, $id);
         } catch (DoesNotExistException $ex) {
-            throw new ServiceNotFoundException($ex->getMessage());
+            throw ServiceNotFoundException::from($ex);
         } catch (MultipleObjectsReturnedException $ex) {
-            throw new ServiceNotFoundException($ex->getMessage());
+            throw ServiceConflictException::from($ex);
+        }
+    }
+
+    /**
+     * Delete all items of a user
+     *
+     * @param string $userId User ID/name
+     */
+    public function deleteUser(string $userId): void
+    {
+        $items = $this->findAllForUser($userId);
+        foreach ($items as $item) {
+            $this->mapper->delete($item);
         }
     }
 }

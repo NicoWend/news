@@ -15,15 +15,17 @@ namespace OCA\News\Tests\Unit\Controller;
 
 use OC\L10N\L10N;
 use OCA\News\Controller\PageController;
-use \OCA\News\Db\FeedType;
+use \OCA\News\Db\ListType;
+use OCA\News\Explore\Exceptions\RecommendedSiteNotFoundException;
 use OCA\News\Explore\RecommendedSites;
 use OCA\News\Service\StatusService;
 use OCP\IConfig;
 use OCP\IL10N;
 use OCP\IRequest;
 use OCP\IURLGenerator;
+use OCP\IUser;
+use OCP\IUserSession;
 use PHPUnit\Framework\TestCase;
-
 
 class PageControllerTest extends TestCase
 {
@@ -101,15 +103,23 @@ class PageControllerTest extends TestCase
         $this->status = $this->getMockBuilder(StatusService::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->user = $this->getMockBuilder(IUser::class)->getMock();
+        $this->user->expects($this->any())
+            ->method('getUID')
+            ->will($this->returnValue('becka'));
+        $this->userSession = $this->getMockBuilder(IUserSession::class)
+            ->getMock();
+        $this->userSession->expects($this->any())
+            ->method('getUser')
+            ->will($this->returnValue($this->user));
         $this->controller = new PageController(
-            'news',
             $this->request,
             $this->settings,
             $this->urlGenerator,
             $this->l10n,
             $this->recommended,
             $this->status,
-            'becka'
+            $this->userSession
         );
     }
 
@@ -254,7 +264,7 @@ class PageControllerTest extends TestCase
             ->method('setUserValue')
             ->withConsecutive(
                 ['becka', 'news', 'lastViewedFeedId', 0],
-                ['becka', 'news', 'lastViewedFeedType', FeedType::EXPLORE]
+                ['becka', 'news', 'lastViewedFeedType', ListType::EXPLORE]
             );
 
         $this->recommended->expects($this->once())
@@ -265,6 +275,26 @@ class PageControllerTest extends TestCase
         $out = $this->controller->explore('en');
 
         $this->assertEquals($in, $out);
+
+    }
+
+    public function testExploreError()
+    {
+        $this->settings->expects($this->exactly(2))
+            ->method('setUserValue')
+            ->withConsecutive(
+                ['becka', 'news', 'lastViewedFeedId', 0],
+                ['becka', 'news', 'lastViewedFeedType', ListType::EXPLORE]
+            );
+
+        $this->recommended->expects($this->once())
+            ->method('forLanguage')
+            ->with('nl')
+            ->will($this->throwException(new RecommendedSiteNotFoundException('error')));
+
+        $out = $this->controller->explore('nl');
+
+        $this->assertEquals(404, $out->getStatus());
 
     }
 

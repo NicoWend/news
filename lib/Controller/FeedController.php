@@ -15,45 +15,58 @@ namespace OCA\News\Controller;
 
 use OCA\News\Service\Exceptions\ServiceConflictException;
 use OCA\News\Service\Exceptions\ServiceNotFoundException;
+use OCA\News\Service\FeedServiceV2;
+use OCA\News\Service\FolderServiceV2;
+use OCA\News\Service\ImportService;
+use OCA\News\Service\ItemServiceV2;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\IRequest;
 use OCP\IConfig;
-use OCP\AppFramework\Controller;
 use OCP\AppFramework\Http;
 
-use OCA\News\Service\ItemService;
-use OCA\News\Service\FeedService;
-use OCA\News\Service\FolderService;
-use OCA\News\Db\FeedType;
+use OCA\News\Db\ListType;
+use OCP\IUserSession;
 
 class FeedController extends Controller
 {
     use JSONHttpErrorTrait;
 
-    //TODO: Remove
+    /**
+     * @var FeedServiceV2
+     */
     private $feedService;
-    //TODO: Remove
-    private $folderService;
-    //TODO: Remove
+    /**
+     * @var ItemServiceV2
+     */
     private $itemService;
-    private $userId;
+    /**
+     * @var FolderServiceV2
+     */
+    private $folderService;
+    /**
+     * @var ImportService
+     */
+    private $importService;
+    /**
+     * @var IConfig
+     */
     private $settings;
 
     public function __construct(
-        string $appName,
         IRequest $request,
-        FolderService $folderService,
-        FeedService $feedService,
-        ItemService $itemService,
+        FolderServiceV2 $folderService,
+        FeedServiceV2 $feedService,
+        ItemServiceV2 $itemService,
+        ImportService $importService,
         IConfig $settings,
-        string $UserId
+        ?IUserSession $userSession
     ) {
-        parent::__construct($appName, $request);
-        $this->feedService = $feedService;
+        parent::__construct($request, $userSession);
         $this->folderService = $folderService;
-        $this->itemService = $itemService;
-        $this->userId = $UserId;
-        $this->settings = $settings;
+        $this->feedService   = $feedService;
+        $this->itemService   = $itemService;
+        $this->importService = $importService;
+        $this->settings      = $settings;
     }
 
 
@@ -67,18 +80,19 @@ class FeedController extends Controller
         // because of this we also pass the starred count and the newest
         // item id which will be used for marking feeds read
         $params = [
-            'feeds' => $this->feedService->findAllForUser($this->userId),
-            'starred' => $this->itemService->starredCount($this->userId),
-            'shared' => $this->itemService->sharedCount($this->userId),
+            'feeds' => $this->feedService->findAllForUser($this->getUserId()),
+            'starred' => count($this->itemService->starred($this->getUserId())),
+            // 'shared' => count($this->itemService->shared($this->getUserId())) // TODO: uncomment when implemented
         ];
 
         try {
-            $params['newestItemId'] =
-                $this->itemService->getNewestItemId($this->userId);
+            $id = $this->itemService->newest($this->getUserId())->getId();
 
             // An exception occurs if there is a newest item. If there is none,
             // simply ignore it and do not add the newestItemId
+            $params['newestItemId'] = $id;
         } catch (ServiceNotFoundException $ex) {
+            //NO-OP
         }
 
         return $params;
@@ -91,38 +105,36 @@ class FeedController extends Controller
     public function active(): array
     {
         $feedId = (int) $this->settings->getUserValue(
-            $this->userId,
+            $this->getUserId(),
             $this->appName,
             'lastViewedFeedId'
         );
         $feedType = $this->settings->getUserValue(
-            $this->userId,
+            $this->getUserId(),
             $this->appName,
             'lastViewedFeedType'
         );
 
-        // cast from null to int is 0
-        if ($feedType !== null) {
-            $feedType = (int) $feedType;
-        }
-
         // check if feed or folder exists
         try {
-            if ($feedType === FeedType::FOLDER) {
-                if ($feedId === 0) {
-                    $feedId = null;
-                }
-                $this->folderService->find($this->userId, $feedId);
-            } elseif ($feedType === FeedType::FEED) {
-                $this->feedService->find($this->userId, $feedId);
+            if ($feedType === null) {
+                throw new ServiceNotFoundException('First launch');
+            }
 
-                // if its the first launch, those values will be null
-            } elseif ($feedType === null) {
-                throw new ServiceNotFoundException('');
+            $feedType = intval($feedType);
+            switch ($feedType) {
+                case ListType::FOLDER:
+                    $this->folderService->find($this->getUserId(), $feedId);
+                    break;
+                case ListType::FEED:
+                    $this->feedService->find($this->getUserId(), $feedId);
+                    break;
+                default:
+                    break;
             }
         } catch (ServiceNotFoundException $ex) {
             $feedId = 0;
-            $feedType = FeedType::SUBSCRIPTIONS;
+            $feedType = ListType::ALL_ITEMS;
         }
 
         return [
@@ -158,25 +170,28 @@ class FeedController extends Controller
         try {
             // we need to purge deleted feeds if a feed is created to
             // prevent already exists exceptions
-            $this->feedService->purgeDeleted($this->userId, false);
+            $this->feedService->purgeDeleted($this->getUserId(), false);
 
             $feed = $this->feedService->create(
+                $this->getUserId(),
                 $url,
                 $parentFolderId,
-                $this->userId,
+                false,
                 $title,
                 $user,
                 $password
             );
             $params = ['feeds' => [$feed]];
 
-            try {
-                $params['newestItemId'] =
-                    $this->itemService->getNewestItemId($this->userId);
+            $this->feedService->fetch($feed);
 
+            try {
+                $id = $this->itemService->newest($this->getUserId())->getId();
                 // An exception occurs if there is a newest item. If there is none,
                 // simply ignore it and do not add the newestItemId
+                $params['newestItemId'] = $id;
             } catch (ServiceNotFoundException $ex) {
+                //NO-OP
             }
 
             return $params;
@@ -198,7 +213,9 @@ class FeedController extends Controller
     public function delete(int $feedId)
     {
         try {
-            $this->feedService->markDeleted($feedId, $this->userId);
+            $feed = $this->feedService->find($this->getUserId(), $feedId);
+            $feed->setDeletedAt(time());
+            $this->feedService->update($this->getUserId(), $feed);
         } catch (ServiceNotFoundException $ex) {
             return $this->error($ex, Http::STATUS_NOT_FOUND);
         }
@@ -217,7 +234,8 @@ class FeedController extends Controller
     public function update(int $feedId)
     {
         try {
-            $feed = $this->feedService->update($this->userId, $feedId);
+            $old_feed = $this->feedService->find($this->getUserId(), $feedId);
+            $feed     = $this->feedService->fetch($old_feed);
 
             return [
                 'feeds' => [
@@ -243,10 +261,10 @@ class FeedController extends Controller
      */
     public function import(array $json): array
     {
-        $feed = $this->feedService->importArticles($json, $this->userId);
+        $feed = $this->importService->importArticles($this->getUserId(), $json);
 
         $params = [
-            'starred' => $this->itemService->starredCount($this->userId)
+            'starred' => count($this->itemService->starred($this->getUserId()))
         ];
 
         if ($feed) {
@@ -266,7 +284,7 @@ class FeedController extends Controller
      */
     public function read(int $feedId, int $highestItemId): array
     {
-        $this->itemService->readFeed($feedId, $highestItemId, $this->userId);
+        $this->feedService->read($this->getUserId(), $feedId, $highestItemId);
 
         return [
             'feeds' => [
@@ -289,7 +307,9 @@ class FeedController extends Controller
     public function restore(int $feedId)
     {
         try {
-            $this->feedService->unmarkDeleted($feedId, $this->userId);
+            $feed = $this->feedService->find($this->getUserId(), $feedId);
+            $feed->setDeletedAt(null);
+            $this->feedService->update($this->getUserId(), $feed);
         } catch (ServiceNotFoundException $ex) {
             return $this->error($ex, Http::STATUS_NOT_FOUND);
         }
@@ -319,24 +339,32 @@ class FeedController extends Controller
         ?int $folderId = null,
         ?string $title = null
     ) {
-        $attributes = [
-            'pinned' => $pinned,
-            'fullTextEnabled' => $fullTextEnabled,
-            'updateMode' => $updateMode,
-            'ordering' => $ordering,
-            'title' => $title,
-            'folderId' => $folderId === 0 ? null : $folderId
-        ];
+        try {
+            $feed = $this->feedService->find($this->getUserId(), $feedId);
+        } catch (ServiceNotFoundException $ex) {
+            return $this->error($ex, Http::STATUS_NOT_FOUND);
+        }
 
-        $diff = array_filter(
-            $attributes,
-            function ($value) {
-                return $value !== null;
-            }
-        );
+        $fId = $folderId === 0 ? null : $folderId;
+        $feed->setFolderId($fId);
+        if ($pinned !== null) {
+            $feed->setPinned($pinned);
+        }
+        if ($fullTextEnabled !== null) {
+            $feed->setFullTextEnabled($fullTextEnabled);
+        }
+        if ($updateMode !== null) {
+            $feed->setUpdateMode($updateMode);
+        }
+        if ($ordering !== null) {
+            $feed->setOrdering($ordering);
+        }
+        if ($title !== null) {
+            $feed->setTitle($title);
+        }
 
         try {
-            $this->feedService->patch($feedId, $this->userId, $diff);
+            $this->feedService->update($this->getUserId(), $feed);
         } catch (ServiceNotFoundException $ex) {
             return $this->error($ex, Http::STATUS_NOT_FOUND);
         }

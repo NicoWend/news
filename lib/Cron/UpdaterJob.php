@@ -52,6 +52,9 @@ class UpdaterJob extends TimedJob
         parent::setInterval($interval);
     }
 
+    /**
+     * @return void
+     */
     protected function run($argument)
     {
         $uses_cron = $this->config->getAppValue(
@@ -60,7 +63,7 @@ class UpdaterJob extends TimedJob
             Application::DEFAULT_SETTINGS['useCronUpdates']
         );
 
-        if (!$uses_cron || !$this->statusService->isProperlyConfigured()) {
+        if (!$uses_cron || !$this->statusService->isCronProperlyConfigured()) {
             return;
         }
 

@@ -10,7 +10,7 @@ jobs:
     strategy:
       matrix:
         php-versions: ['7.4']
-        nextcloud: ['20']
+        nextcloud: ['stable21']
         database: ['sqlite']
         experimental: [false]
     steps:
@@ -21,10 +21,11 @@ jobs:
         uses: shivammathur/setup-php@v2
         with:
           php-version: ${{ matrix.php-versions }}
+          extensions: pdo_sqlite,pdo_mysql,pdo_pgsql,gd,zip
+          coverage: pcov
 
       ### Back to normal setup
       - name: Set up server non MySQL
-        if: matrix.database != 'mysql'
         uses: SMillerDev/nextcloud-actions/setup-nextcloud@main
         with:
           cron: true
@@ -40,13 +41,15 @@ jobs:
           app: 'news'
           check-code: true
 
+      - name: Setup problem matchers for PHPUnit
+        run: echo "::add-matcher::${{ runner.tool_cache }}/phpunit.json"
+
       - name: Prep PHP tests
-        run: cd ../server/apps/news && make php-test-dependencies
-      - name: PHPCS
-        run: cd ../server/apps/news && make phpcs
-      - name: PHPStan
-        run: cd ../server/apps/news && make phpstan
+        working-directory: ../server/apps/news
+        run: make php-test-dependencies
       - name: Unittests
-        run: cd ../server/apps/news && make unit-test
+        working-directory: ../server/apps/news
+        run: make unit-test
       - name: Upload codecoverage
-        run: cd ../server/apps/news && bash <(curl -s https://codecov.io/bash) -f build/php-unit.clover
+        working-directory: ../server/apps/news
+        run: bash <(curl -s https://codecov.io/bash) -f build/php-unit.clover

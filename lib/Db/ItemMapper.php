@@ -11,6 +11,10 @@
  * @copyright 2012-2014 Bernhard Posselt
  */
 
+
+////////////////////////////////////////////////////////////////////////////
+// TODO: TO DELETE
+
 namespace OCA\News\Db;
 
 use Exception;

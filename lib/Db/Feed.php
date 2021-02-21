@@ -25,6 +25,16 @@ class Feed extends Entity implements IAPI, \JsonSerializable
 {
     use EntityJSONSerializer;
 
+    /**
+     * Silently import new items
+     */
+    const UPDATE_MODE_SILENT = 0;
+
+    /**
+     * Mark new items as unread.
+     */
+    const UPDATE_MODE_NORMAL = 1;
+
     /** @var string */
     protected $userId = '';
     /** @var string */
@@ -53,8 +63,6 @@ class Feed extends Entity implements IAPI, \JsonSerializable
     protected $httpLastModified = null;
     /** @var string|null */
     protected $lastModified = '0';
-    /** @var string|null */
-    protected $httpEtag = null;
     /** @var string|null */
     protected $location = null;
     /** @var int */
@@ -91,7 +99,6 @@ class Feed extends Entity implements IAPI, \JsonSerializable
         $this->addType('articlesPerUpdate', 'integer');
         $this->addType('httpLastModified', 'string');
         $this->addType('lastModified', 'string');
-        $this->addType('httpEtag', 'string');
         $this->addType('location', 'string');
         $this->addType('ordering', 'integer');
         $this->addType('fullTextEnabled', 'boolean');
@@ -165,14 +172,6 @@ class Feed extends Entity implements IAPI, \JsonSerializable
     public function getFullTextEnabled(): bool
     {
         return $this->fullTextEnabled;
-    }
-
-    /**
-     * @return string|null
-     */
-    public function getHttpEtag(): ?string
-    {
-        return $this->httpEtag;
     }
 
     /**
@@ -438,19 +437,6 @@ class Feed extends Entity implements IAPI, \JsonSerializable
         if ($this->fullTextEnabled !== $fullTextEnabled) {
             $this->fullTextEnabled = $fullTextEnabled;
             $this->markFieldUpdated('fullTextEnabled');
-        }
-
-        return $this;
-    }
-
-    /**
-     * @param string|null $httpEtag
-     */
-    public function setHttpEtag(?string $httpEtag = null): Feed
-    {
-        if ($this->httpEtag !== $httpEtag) {
-            $this->httpEtag = $httpEtag;
-            $this->markFieldUpdated('httpEtag');
         }
 
         return $this;

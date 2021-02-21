@@ -39,8 +39,6 @@ class Item extends Entity implements IAPI, \JsonSerializable
     protected $author;
     /** @var int|null */
     protected $pubDate;
-    /** @var int|null */
-    protected $updatedDate;
     /** @var string|null */
     protected $body;
     /** @var string|null */
@@ -53,8 +51,6 @@ class Item extends Entity implements IAPI, \JsonSerializable
     protected $mediaDescription;
     /** @var int|null */
     protected $feedId;
-    /** @var int */
-    protected $status = 0;
     /** @var string|null */
     protected $lastModified = '0';
     /** @var string|null */
@@ -82,14 +78,12 @@ class Item extends Entity implements IAPI, \JsonSerializable
         $this->addType('title', 'string');
         $this->addType('author', 'string');
         $this->addType('pubDate', 'integer');
-        $this->addType('updatedDate', 'integer');
         $this->addType('body', 'string');
         $this->addType('enclosureMime', 'string');
         $this->addType('enclosureLink', 'string');
         $this->addType('mediaThumbnail', 'string');
         $this->addType('mediaDescription', 'string');
         $this->addType('feedId', 'integer');
-        $this->addType('status', 'integer');
         $this->addType('lastModified', 'string');
         $this->addType('searchIndex', 'string');
         $this->addType('rtl', 'boolean');
@@ -122,7 +116,6 @@ class Item extends Entity implements IAPI, \JsonSerializable
         $item->setTitle($import['title']);
         $item->setAuthor($import['author']);
         $item->setPubDate($import['pubDate']);
-        $item->setUpdatedDate($import['updatedDate']);
         $item->setBody($import['body']);
         $item->setEnclosureMime($import['enclosureMime']);
         $item->setEnclosureLink($import['enclosureLink']);
@@ -206,10 +199,7 @@ class Item extends Entity implements IAPI, \JsonSerializable
         return $this->enclosureMime;
     }
 
-    /**
-     * @return null|int
-     */
-    public function getFeedId(): ?string
+    public function getFeedId(): int
     {
         return $this->feedId;
     }
@@ -275,14 +265,6 @@ class Item extends Entity implements IAPI, \JsonSerializable
     }
 
     /**
-     * @return int|null
-     */
-    public function getUpdatedDate(): ?int
-    {
-        return $this->updatedDate;
-    }
-
-    /**
      * @return null|string
      */
     public function getUrl(): ?string
@@ -328,7 +310,7 @@ class Item extends Entity implements IAPI, \JsonSerializable
             'title' => $this->getTitle(),
             'author' => $this->getAuthor(),
             'pubDate' => $this->getPubDate(),
-            'updatedDate' => $this->getUpdatedDate(),
+            'updatedDate' => null,
             'body' => $this->getBody(),
             'enclosureMime' => $this->getEnclosureMime(),
             'enclosureLink' => $this->getEnclosureLink(),
@@ -555,16 +537,6 @@ class Item extends Entity implements IAPI, \JsonSerializable
         return $this;
     }
 
-    public function setUpdatedDate(int $updatedDate = null): self
-    {
-        if ($this->updatedDate !== $updatedDate) {
-            $this->updatedDate = $updatedDate;
-            $this->markFieldUpdated('updatedDate');
-        }
-
-        return $this;
-    }
-
     public function setUrl(string $url = null): self
     {
         $url = trim($url);
@@ -588,7 +560,7 @@ class Item extends Entity implements IAPI, \JsonSerializable
             'title' => $this->getTitle(),
             'author' => $this->getAuthor(),
             'pubDate' => $this->getPubDate(),
-            'updatedDate' => $this->getUpdatedDate(),
+            'updatedDate' => null,
             'body' => $this->getBody(),
             'enclosureMime' => $this->getEnclosureMime(),
             'enclosureLink' => $this->getEnclosureLink(),
@@ -604,6 +576,13 @@ class Item extends Entity implements IAPI, \JsonSerializable
         ];
     }
 
+    /**
+     * Format for exporting.
+     *
+     * @param $feeds
+     *
+     * @return array
+     */
     public function toExport($feeds): array
     {
         return [
@@ -612,7 +591,7 @@ class Item extends Entity implements IAPI, \JsonSerializable
             'title' => $this->getTitle(),
             'author' => $this->getAuthor(),
             'pubDate' => $this->getPubDate(),
-            'updatedDate' => $this->getUpdatedDate(),
+            'updatedDate' => null,
             'body' => $this->getBody(),
             'enclosureMime' => $this->getEnclosureMime(),
             'enclosureLink' => $this->getEnclosureLink(),

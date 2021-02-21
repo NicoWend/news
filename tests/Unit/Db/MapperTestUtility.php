@@ -23,9 +23,12 @@
 
 namespace OCA\News\Tests\Unit\Db;
 
-use Doctrine\DBAL\Driver\PDOStatement;
+use Doctrine\DBAL\Driver\Statement;
+use OC\DB\QueryBuilder\QueryBuilder;
+use OCP\DB\QueryBuilder\IQueryBuilder;
 use OCP\IDBConnection;
 
+use PDOStatement;
 use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
@@ -45,6 +48,16 @@ abstract class MapperTestUtility extends TestCase
      */
     protected $query;
 
+    /**
+     * @var MockObject|IQueryBuilder
+     */
+    protected $builder;
+
+    /**
+     * @var MockObject|Statement
+     */
+    protected $cursor;
+
 
     /**
      * Run this function before the actual test to either set or initialize the
@@ -58,7 +71,15 @@ abstract class MapperTestUtility extends TestCase
                          ->disableOriginalConstructor()
                          ->getMock();
 
-        $this->query = $this->getMockBuilder(\PDOStatement::class)
+        $this->query = $this->getMockBuilder(PDOStatement::class)
                             ->getMock();
+
+        $this->builder = $this->getMockBuilder(IQueryBuilder::class)
+                              ->disableOriginalConstructor()
+                              ->getMock();
+
+        $this->cursor = $this->getMockBuilder(Statement::class)
+                             ->addMethods(['fetch', 'closeCursor'])
+                             ->getMockForAbstractClass();
     }
 }

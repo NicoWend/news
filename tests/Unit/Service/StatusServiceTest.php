@@ -16,18 +16,19 @@ namespace OCA\News\Tests\Unit\Service;
 use OCA\News\Service\StatusService;
 use OCP\IConfig;
 use OCP\IDBConnection;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 
 class StatusServiceTest extends TestCase
 {
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|IConfig
+     * @var MockObject|IConfig
      */
     private $settings;
 
     /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|IDBConnection
+     * @var MockObject|IDBConnection
      */
     private $connection;
 
@@ -44,12 +45,9 @@ class StatusServiceTest extends TestCase
         $this->connection = $this->getMockBuilder(IDBConnection::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->service = new StatusService($this->settings, $this->connection, 'news');
+        $this->service = new StatusService($this->settings, $this->connection);
     }
 
-    /**
-     * @covers \OCA\News\Service\StatusService::getStatus
-     */
     public function testGetStatus()
     {
         $this->settings->expects($this->exactly(3))
@@ -80,9 +78,6 @@ class StatusServiceTest extends TestCase
         $this->assertEquals($expected, $response);
     }
 
-    /**
-     * @covers \OCA\News\Service\StatusService::getStatus
-     */
     public function testGetStatusNoCorrectCronAjax()
     {
         $this->settings->expects($this->exactly(3))
@@ -113,9 +108,6 @@ class StatusServiceTest extends TestCase
         $this->assertEquals($expected, $response);
     }
 
-    /**
-     * @covers \OCA\News\Service\StatusService::getStatus
-     */
     public function testGetStatusNoCorrectCronTurnedOff()
     {
         $this->settings->expects($this->exactly(3))
@@ -146,9 +138,6 @@ class StatusServiceTest extends TestCase
         $this->assertEquals($expected, $response);
     }
 
-    /**
-     * @covers \OCA\News\Service\StatusService::getStatus
-     */
     public function testGetStatusReportsNon4ByteText()
     {
         $this->settings->expects($this->exactly(3))
@@ -177,6 +166,57 @@ class StatusServiceTest extends TestCase
         ];
         $response = $this->service->getStatus();
         $this->assertEquals($expected, $response);
+    }
+
+    public function testIsProperlyConfiguredNone()
+    {
+        $this->settings->expects($this->exactly(2))
+            ->method('getAppValue')
+            ->withConsecutive(
+                ['core', 'backgroundjobs_mode'],
+                ['news', 'useCronUpdates']
+            )
+            ->will($this->returnValueMap([
+                ['core', 'backgroundjobs_mode', '', 'ajax'],
+                ['news', 'useCronUpdates', true, true],
+            ]));
+
+        $response = $this->service->isCronProperlyConfigured();
+        $this->assertFalse($response);
+    }
+
+    public function testIsProperlyConfiguredModeCronNoSystem()
+    {
+        $this->settings->expects($this->exactly(2))
+            ->method('getAppValue')
+            ->withConsecutive(
+                ['core', 'backgroundjobs_mode'],
+                ['news', 'useCronUpdates']
+            )
+            ->will($this->returnValueMap([
+                ['core', 'backgroundjobs_mode', '', 'cron'],
+                ['news', 'useCronUpdates', true, false],
+            ]));
+
+        $response = $this->service->isCronProperlyConfigured();
+        $this->assertTrue($response);
+    }
+
+    public function testIsProperlyConfiguredModeCron()
+    {
+        $this->settings->expects($this->exactly(2))
+            ->method('getAppValue')
+            ->withConsecutive(
+                ['core', 'backgroundjobs_mode'],
+                ['news', 'useCronUpdates']
+            )
+            ->will($this->returnValueMap([
+                ['core', 'backgroundjobs_mode', '', 'cron'],
+                ['news', 'useCronUpdates', true, false],
+            ]));
+
+        $response = $this->service->isCronProperlyConfigured();
+        $this->assertTrue($response);
     }
 
 }

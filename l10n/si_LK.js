@@ -23,14 +23,6 @@ OC.L10N.register(
     "Import" : "ආයාත කරන්න",
     "Export" : "නිර්යාත කරන්න",
     "Help" : "උදව්",
-    "Documentation" : "ලේඛන",
-
-    "Contacts" : "සම්බන්ධතා",
-    "Share on social media" : "සමාජ මාධ්‍යවල බෙදා ගන්න",
-    "Contact name": "සම්බන්ධතා නම",
-    "shared from":"වෙතින් බෙදාගෙන ඇත",
-    "Shared": "බෙදාගෙන ඇත",
-    "Shared articles": "බෙදාගත් ලිපි",
-    "users":"පරිශීලකයින්"
+    "Documentation" : "ලේඛන"
 },
 "nplurals=2; plural=(n != 1);");

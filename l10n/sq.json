@@ -108,13 +108,6 @@
     "Help" : "Ndihmë",
     "Keyboard shortcuts" : "Shkurtore tastiere",
     "Documentation" : "Dokumentim",
-    "Report a bug" : "Njoftoni një të metë",
-    "Contacts" : "kontaktet",
-    "Share on social media" : "ndajnë në mediat sociale",
-    "Contact name": "emrin e kontaktit",
-    "shared from":"ndahet nga",
-    "Shared": "të përbashkëta",
-    "Shared articles": "artikuj të përbashkët",
-    "users":"përdoruesit"
+    "Report a bug" : "Njoftoni një të metë"
 },"pluralForm" :"nplurals=2; plural=(n != 1);"
 }

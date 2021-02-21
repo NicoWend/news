@@ -33,13 +33,6 @@ OC.L10N.register(
     "Unread/Starred Articles" : "Oxunulmamış/Ulduzlanmış məqalələr",
     "Error when importing: file does not contain valid JSON" : "Yüklənmədə səhv: faylda düzgün JSON yoxdur",
     "Help" : "Kömək",
-    "Documentation" : "Sənədlər",
-    "Report a bug" : "Bir səhv bildirin",
-    "Contacts" : "Əlaqə",
-    "Share on social media" :"Sosial mediada paylaş",
-    "Contact name" :"Əlaqə adı",
-    "shared from":"paylaşılan",
-    "Shared" : "Paylaşılan",
-    "Shared articles" : "Paylaşılan məqalələr"
+    "Documentation" : "Sənədlər"
 },
 "nplurals=2; plural=(n != 1);");

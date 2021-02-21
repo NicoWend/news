@@ -127,13 +127,9 @@ OC.L10N.register(
     "Keyboard shortcuts" : "Raccourcis clavier",
     "Documentation" : "Documentation",
     "Report a bug" : "Signaler un bogue",
-    "Contacts" : "Contacts",
-    "shared from" : "Partager de",
     "Share on social media" : "Partage sur les réseaux sociaux",
     "Contact name" : "Nom de contact",
-    "Users": "Utilisateurs",
-    "No contact found.": "Aucun utilisateur trouvé."
-
+    "Users": "Utilisateurs"
 
 },
 "nplurals=2; plural=(n > 1);");

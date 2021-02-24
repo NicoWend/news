@@ -133,7 +133,7 @@ class ItemController extends Controller
                 $return['newestItemId'] = $this->itemService->newest($this->getUserId())->getId();
                 $return['feeds'] = $this->feedService->findAllForUser($this->getUserId());
                 $return['starred'] = count($this->itemService->starred($this->getUserId()));
-                // $return['shared'] = count($this->itemService->shared($this->getUserId())); // TODO: decomment when implemented
+                $return['shared'] = count($this->itemService->sharedWithUser($this->getUserId()));
             }
 
             switch ($type) {
@@ -241,7 +241,7 @@ class ItemController extends Controller
             $return['newestItemId'] = $this->itemService->newest($this->getUserId())->getId();
             $return['feeds'] = $this->feedService->findAllForUser($this->getUserId());
             $return['starred'] = count($this->itemService->starred($this->getUserId()));
-            // $return['shared'] = count($this->itemService->shared($this->getUserId())); // TODO: uncomment when implemented
+            $return['shared'] = count($this->itemService->sharedWithUser($this->getUserId()));
             $return['items'] = $items;
 
             // this gets thrown if there are no items

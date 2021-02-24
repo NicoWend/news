@@ -159,9 +159,16 @@ class ItemController extends Controller
                         $search_items
                     );
                     break;
-                // case ListType::SHARED:
-                    // $items = $this->itemService->findAllSharedWithFilters() // TODO: uncomment and implement
-                    // break;
+                case ListType::SHARED:
+                    $items = $this->itemService->findAllSharedWithUserWithFilters(
+                        $this->getUserId(),
+                        $limit,
+                        $offset,
+                        !$showAll,
+                        $oldestFirst,
+                        $search_items
+                    );
+                    break;
 
                 default:
                     $items = $this->itemService->findAllWithFilters(

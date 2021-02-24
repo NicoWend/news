@@ -93,10 +93,11 @@ class ItemMapperV2 extends NewsMapperV2
         $builder->select('items.*')
             ->from($this->tableName, 'items')
             ->innerJoin('items', FeedMapperV2::TABLE_NAME, 'feeds', 'items.feed_id = feeds.id')
-            ->where('feeds.user_id = :user_id')
+            ->where('(feeds.user_id = :user_id AND items.shared_by = \'\') OR items.shared_with = :shared_with')
             ->andWhere('items.id = :item_id')
             ->andWhere('feeds.deleted_at = 0')
             ->setParameter('user_id', $userId, IQueryBuilder::PARAM_STR)
+            ->setParameter('shared_with', $userId, IQueryBuilder::PARAM_STR)
             ->setParameter('item_id', $id, IQueryBuilder::PARAM_INT);
 
         return $this->findEntity($builder);
@@ -144,10 +145,11 @@ class ItemMapperV2 extends NewsMapperV2
         $builder->select('items.*')
             ->from($this->tableName, 'items')
             ->innerJoin('items', FeedMapperV2::TABLE_NAME, 'feeds', 'items.feed_id = feeds.id')
-            ->andWhere('feeds.user_id = :user_id')
+            ->andWhere('(feeds.user_id = :user_id AND items.shared_by = \'\') OR items.shared_with = :shared_with')
             ->andWhere('feeds.id = :feed_id')
             ->andWhere('items.guid_hash = :guid_hash')
             ->setParameter('user_id', $userId, IQueryBuilder::PARAM_STR)
+            ->setParameter('shared_with', $userId, IQueryBuilder::PARAM_STR)
             ->setParameter('feed_id', $feedId, IQueryBuilder::PARAM_INT)
             ->setParameter('guid_hash', $guidHash, IQueryBuilder::PARAM_STR);
 
@@ -264,9 +266,10 @@ class ItemMapperV2 extends NewsMapperV2
                 ->innerJoin('items', FeedMapperV2::TABLE_NAME, 'feeds', 'items.feed_id = feeds.id')
                 ->setValue('unread', 0)
                 ->andWhere('items.id =< :maxItemId')
-                ->andWhere('feeds.user_id = :userId')
+                ->andWhere('(feeds.userId = :user_id AND items.shared_by = \'\') OR items.shared_with = :sharedWith')
                 ->setParameter('maxItemId', $maxItemId)
-                ->setParameter('userId', $userId);
+                ->setParameter('userId', $userId)
+                ->setParameter('sharedWith', $userId);
 
         $this->db->executeUpdate($builder->getSQL());
     }
@@ -383,8 +386,8 @@ class ItemMapperV2 extends NewsMapperV2
             ->from($this->tableName, 'items')
             ->innerJoin('items', FeedMapperV2::TABLE_NAME, 'feeds', 'items.feed_id = feeds.id')
             ->andWhere('items.last_modified >= :updatedSince')
-            ->andWhere('feeds.user_id = :userId')
-            ->setParameters(['updatedSince' => $updatedSince, 'userId' => $userId])
+            ->andWhere('(feeds.user_id = :userId AND items.shared_by = \'\') OR items.shared_with = :sharedWith')
+            ->setParameters(['updatedSince' => $updatedSince, 'userId' => $userId, 'sharedWith' => $userId])
             ->orderBy('items.last_modified', 'DESC')
             ->addOrderBy('items.id', 'DESC');
 
@@ -577,8 +580,9 @@ class ItemMapperV2 extends NewsMapperV2
         $builder->select('items.*')
             ->from($this->tableName, 'items')
             ->innerJoin('items', FeedMapperV2::TABLE_NAME, 'feeds', 'items.feed_id = feeds.id')
-            ->andWhere('feeds.user_id = :userId')
+            ->andWhere('(feeds.user_id = :userId AND items.shared_by = \'\') OR items.shared_with = :sharedWith')
             ->setParameter('userId', $userId)
+            ->setParameter('sharedWith', $userId)
             ->setMaxResults($limit)
             ->setFirstResult($offset)
             ->orderBy('items.last_modified', ($oldestFirst ? 'ASC' : 'DESC'))

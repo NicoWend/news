@@ -448,10 +448,12 @@ class ItemServiceV2 extends Service
      */
     public function share(string $userId, int $id, string $shareWithId): Entity
     {
-        // TODO: check if item is already shared with the user
-        
-        /** @var Item $item */
-        $item = $this->find($userId, $id);
+        // find item to share
+        try {
+            $item = $this->find($userId, $id);
+        } catch (DoesNotExistException $ex) {
+            throw ServiceNotFoundException::from($ex);
+        }
 
         // duplicate the item
         $sharedItem = Item::fromImport($item->jsonSerialize());
@@ -468,7 +470,6 @@ class ItemServiceV2 extends Service
         $sharedItem->setSharedBy($userId);
         $sharedItem->setSharedWith($shareWithId);
 
-        // return $this->mapper->update($item);
         return $this->mapper->insert($sharedItem);
     }
 

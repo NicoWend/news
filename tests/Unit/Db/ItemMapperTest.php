@@ -2109,12 +2109,12 @@ class ItemMapperTest extends MapperTestUtility
 
         $this->builder->expects($this->exactly(2))
             ->method('andWhere')
-            ->withConsecutive(['items.id =< :maxItemId'], ['feeds.user_id = :userId'])
+            ->withConsecutive(['items.id =< :maxItemId'], ['(feeds.user_id = :userId AND items.shared_by = \'\') OR items.shared_with = :sharedWith'])
             ->will($this->returnSelf());
 
-        $this->builder->expects($this->exactly(2))
+        $this->builder->expects($this->exactly(3))
             ->method('setParameter')
-            ->withConsecutive(['maxItemId', 4], ['userId', 'jack'])
+            ->withConsecutive(['maxItemId', 4], ['userId', 'jack'], ['sharedWith', 'jack'])
             ->will($this->returnSelf());
 
         $this->builder->expects($this->exactly(1))

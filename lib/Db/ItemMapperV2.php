@@ -266,7 +266,7 @@ class ItemMapperV2 extends NewsMapperV2
                 ->innerJoin('items', FeedMapperV2::TABLE_NAME, 'feeds', 'items.feed_id = feeds.id')
                 ->setValue('unread', 0)
                 ->andWhere('items.id =< :maxItemId')
-                ->andWhere('(feeds.userId = :user_id AND items.shared_by = \'\') OR items.shared_with = :sharedWith')
+                ->andWhere('(feeds.user_id = :userId AND items.shared_by = \'\') OR items.shared_with = :sharedWith')
                 ->setParameter('maxItemId', $maxItemId)
                 ->setParameter('userId', $userId)
                 ->setParameter('sharedWith', $userId);

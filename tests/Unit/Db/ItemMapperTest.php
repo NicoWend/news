@@ -491,10 +491,11 @@ class ItemMapperTest extends MapperTestUtility
             ->with('items', 'news_feeds', 'feeds', 'items.feed_id = feeds.id')
             ->will($this->returnSelf());
 
-        $this->builder->expects($this->exactly(3))
+        $this->builder->expects($this->exactly(4))
             ->method('andWhere')
             ->withConsecutive(
                 ['items.last_modified >= :updatedSince'],
+                ['items.shared_by = \'\''],
                 ['feeds.user_id = :userId'],
                 ['feeds.id = :feedId']
             )
@@ -555,10 +556,11 @@ class ItemMapperTest extends MapperTestUtility
             ->with('items', 'news_feeds', 'feeds', 'items.feed_id = feeds.id')
             ->will($this->returnSelf());
 
-        $this->builder->expects($this->exactly(4))
+        $this->builder->expects($this->exactly(5))
             ->method('andWhere')
             ->withConsecutive(
                 ['items.last_modified >= :updatedSince'],
+                ['items.shared_by = \'\''],
                 ['feeds.user_id = :userId'],
                 ['feeds.id = :feedId'],
                 ['items.unread = 1']
@@ -623,10 +625,11 @@ class ItemMapperTest extends MapperTestUtility
             )
             ->will($this->returnSelf());
 
-        $this->builder->expects($this->exactly(3))
+        $this->builder->expects($this->exactly(4))
             ->method('andWhere')
             ->withConsecutive(
                 ['items.last_modified >= :updatedSince'],
+                ['items.shared_by = \'\''],
                 ['feeds.user_id = :userId'],
                 ['folders.id = :folderId']
             )
@@ -690,10 +693,11 @@ class ItemMapperTest extends MapperTestUtility
             )
             ->will($this->returnSelf());
 
-        $this->builder->expects($this->exactly(4))
+        $this->builder->expects($this->exactly(5))
             ->method('andWhere')
             ->withConsecutive(
                 ['items.last_modified >= :updatedSince'],
+                ['items.shared_by = \'\''],
                 ['feeds.user_id = :userId'],
                 ['folders.id = :folderId'],
                 ['items.unread = 1']

@@ -440,13 +440,29 @@ class ItemMapperV2 extends NewsMapperV2
     }
 
     /**
-     * @param string $userId
-     * @param int    $feedId
-     * @param int    $limit
-     * @param int    $offset
-     * @param bool   $hideRead
-     * @param bool   $oldestFirst
-     * @param array  $search
+     * Generate an expression for the offset.
+     *
+     * @param bool $oldestFirst Sorting direction
+     *
+     * @return string
+     */
+    private function offsetWhere(bool $oldestFirst): string
+    {
+        if ($oldestFirst === true) {
+            return 'items.id > :offset';
+        }
+
+        return 'items.id < :offset';
+    }
+
+    /**
+     * @param string $userId      User identifier
+     * @param int    $feedId      Feed identifier
+     * @param int    $limit       Max items to retrieve
+     * @param int    $offset      First item ID to retrieve
+     * @param bool   $hideRead    Hide read items
+     * @param bool   $oldestFirst Chronological sort
+     * @param array  $search      Search terms
      *
      * @return Item[]
      */
@@ -470,7 +486,6 @@ class ItemMapperV2 extends NewsMapperV2
             ->setParameter('userId', $userId)
             ->setParameter('feedId', $feedId)
             ->setMaxResults($limit)
-            ->setFirstResult($offset)
             ->orderBy('items.last_modified', ($oldestFirst ? 'ASC' : 'DESC'))
             ->addOrderBy('items.id', ($oldestFirst ? 'ASC' : 'DESC'));
 
@@ -482,6 +497,11 @@ class ItemMapperV2 extends NewsMapperV2
             }
         }
 
+        if ($offset !== 0) {
+            $builder->andWhere($this->offsetWhere($oldestFirst))
+                ->setParameter('offset', $offset);
+        }
+
         if ($hideRead === true) {
             $builder->andWhere('items.unread = 1');
         }
@@ -490,13 +510,13 @@ class ItemMapperV2 extends NewsMapperV2
     }
 
     /**
-     * @param string   $userId
-     * @param int|null $folderId
-     * @param int      $limit
-     * @param int      $offset
-     * @param bool     $hideRead
-     * @param bool     $oldestFirst
-     * @param array    $search
+     * @param string   $userId      User identifier
+     * @param int|null $folderId    Folder identifier (null for root)
+     * @param int      $limit       Max items to retrieve
+     * @param int      $offset      First item ID to retrieve
+     * @param bool     $hideRead    Hide read items
+     * @param bool     $oldestFirst Chronological sort
+     * @param array    $search      Search terms
      *
      * @return Item[]
      */
@@ -525,7 +545,6 @@ class ItemMapperV2 extends NewsMapperV2
             ->andWhere($folderWhere)
             ->setParameter('userId', $userId)
             ->setMaxResults($limit)
-            ->setFirstResult($offset)
             ->orderBy('items.last_modified', ($oldestFirst ? 'ASC' : 'DESC'))
             ->addOrderBy('items.id', ($oldestFirst ? 'ASC' : 'DESC'));
 
@@ -535,6 +554,11 @@ class ItemMapperV2 extends NewsMapperV2
                 $builder->andWhere("items.search_index LIKE :term${key}")
                     ->setParameter("term${key}", "%$term%");
             }
+        }
+
+        if ($offset !== 0) {
+            $builder->andWhere($this->offsetWhere($oldestFirst))
+                ->setParameter('offset', $offset);
         }
 
         if ($hideRead === true) {
@@ -618,7 +642,6 @@ class ItemMapperV2 extends NewsMapperV2
             ->setParameter('userId', $userId)
             ->setParameter('sharedWith', $userId)
             ->setMaxResults($limit)
-            ->setFirstResult($offset)
             ->orderBy('items.last_modified', ($oldestFirst ? 'ASC' : 'DESC'))
             ->addOrderBy('items.id', ($oldestFirst ? 'ASC' : 'DESC'));
 
@@ -628,6 +651,11 @@ class ItemMapperV2 extends NewsMapperV2
                 $builder->andWhere("items.search_index LIKE :term${key}")
                         ->setParameter("term${key}", "%$term%");
             }
+        }
+
+        if ($offset !== 0) {
+            $builder->andWhere($this->offsetWhere($oldestFirst))
+                ->setParameter('offset', $offset);
         }
 
         switch ($type) {

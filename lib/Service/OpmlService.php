@@ -20,19 +20,14 @@ class OpmlService
 {
 
     /**
-     * @var FolderService
+     * @var FolderServiceV2
      */
     private $folderService;
 
     /**
-     * @var FeedService
+     * @var FeedServiceV2
      */
     private $feedService;
-
-    /**
-     * @var ItemService
-     */
-    private $itemService;
 
     /**
      * @var OPMLExporter
@@ -42,12 +37,10 @@ class OpmlService
     public function __construct(
         FolderServiceV2 $folderService,
         FeedServiceV2 $feedService,
-        ItemServiceV2 $itemService,
         OPMLExporter $exporter
     ) {
         $this->folderService = $folderService;
         $this->feedService = $feedService;
-        $this->itemService = $itemService;
         $this->exporter = $exporter;
     }
 

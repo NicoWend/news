@@ -25,6 +25,8 @@ use \OCA\News\Db\Feed;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use OCP\IRequest;
 
+use OCP\IUser;
+use OCP\IUserSession;
 use PHPUnit\Framework\TestCase;
 
 class ExportControllerTest extends TestCase
@@ -32,6 +34,10 @@ class ExportControllerTest extends TestCase
 
     private $controller;
     private $user;
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|IUserSession
+     */
+    private $userSession;
     /**
      * @var \PHPUnit\Framework\MockObject\MockObject|FeedServiceV2
      */
@@ -55,7 +61,6 @@ class ExportControllerTest extends TestCase
     public function setUp(): void
     {
         $appName = 'news';
-        $this->user = 'john';
         $this->itemService = $this->getMockBuilder(ItemServiceV2::class)
             ->disableOriginalConstructor()
             ->getMock();
@@ -68,17 +73,25 @@ class ExportControllerTest extends TestCase
         $this->opmlService = $this->getMockBuilder(OpmlService::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->user = $this->getMockBuilder(IUser::class)->getMock();
+        $this->user->expects($this->any())
+                   ->method('getUID')
+                   ->will($this->returnValue('user'));
+        $this->userSession = $this->getMockBuilder(IUserSession::class)
+                                  ->getMock();
+        $this->userSession->expects($this->any())
+                          ->method('getUser')
+                          ->will($this->returnValue($this->user));
         $request = $this->getMockBuilder(IRequest::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->controller = new ExportController(
-            $appName,
             $request,
             $this->folderService,
             $this->feedService,
             $this->itemService,
             $this->opmlService,
-            $this->user
+            $this->userSession
         );
     }
 
@@ -96,7 +109,7 @@ class ExportControllerTest extends TestCase
 
         $this->opmlService->expects($this->once())
             ->method('export')
-            ->with($this->user)
+            ->with('user')
             ->will($this->returnValue($opml));
 
         $return = $this->controller->opml();
@@ -126,12 +139,12 @@ class ExportControllerTest extends TestCase
 
         $this->feedService->expects($this->once())
             ->method('findAllForUser')
-            ->with($this->user)
+            ->with('user')
             ->will($this->returnValue($feeds));
-        $this->itemService->expects($this->once())
+        $this->itemService->expects($this->exactly(2))
             ->method('findAllForUser')
-            ->with($this->user, ['unread' => true, 'starred' => true])
-            ->will($this->returnValue($articles));
+            ->withConsecutive(['user', ['unread' => false, 'starred' => true]], ['user', ['unread' => true]])
+            ->willReturnOnConsecutiveCalls($articles, []);
 
 
         $return = $this->controller->articles();

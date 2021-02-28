@@ -17,18 +17,14 @@ namespace OCA\News\Controller;
 
 use \OCP\IRequest;
 use \OCP\IUserSession;
-use \OCP\IURLGenerator;
-use \OCP\Files\IRootFolder;
-use \OCP\AppFramework\Http;
 
 class UserApiController extends ApiController
 {
     public function __construct(
-        string $appName,
         IRequest $request,
-        IUserSession $userSession
+        ?IUserSession $userSession
     ) {
-        parent::__construct($appName, $request, $userSession);
+        parent::__construct($request, $userSession);
     }
 
     /**

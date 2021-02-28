@@ -55,6 +55,8 @@ ifeq (,$(composer))
 	composer:=php $(build_tools_directory)/composer.phar
 endif
 
+#Support xDebug 3.0+
+export XDEBUG_MODE=coverage
 
 all: build
 
@@ -141,7 +143,7 @@ endif
 .PHONY: appstore
 appstore:
 	rm -rf $(appstore_build_directory) $(appstore_sign_dir) $(appstore_artifact_directory)
-	mkdir -p $(appstore_sign_dir)/$(app_name)
+	install -d $(appstore_sign_dir)/$(app_name)
 	cp -r \
 	"appinfo" \
 	"css" \
@@ -150,10 +152,16 @@ appstore:
 	"lib" \
 	"templates" \
 	"vendor" \
-	"COPYING" \
-	"AUTHORS.md" \
-	"CHANGELOG.md" \
 	$(appstore_sign_dir)/$(app_name)
+
+	# remove composer binaries, those aren't needed
+	rm -rf $(appstore_sign_dir)/$(app_name)/vendor/bin
+	# the App Store doesn't like .git
+	rm -rf $(appstore_sign_dir)/$(app_name)/vendor/arthurhoaro/favicon/.git
+
+	install "COPYING" $(appstore_sign_dir)/$(app_name)
+	install "AUTHORS.md" $(appstore_sign_dir)/$(app_name)
+	install "CHANGELOG.md" $(appstore_sign_dir)/$(app_name)
 
 	#remove stray .htaccess files since they are filtered by nextcloud
 	find $(appstore_sign_dir) -name .htaccess -exec rm {} \;
@@ -192,18 +200,12 @@ php-test-dependencies:
 unit-test:
 	./vendor/phpunit/phpunit/phpunit -c phpunit.xml --coverage-clover build/php-unit.clover
 
-# \Test\TestCase is only allowed to access the db if TRAVIS environment variable is set
-.PHONY: integration-test
-integration-test:
-	env TRAVIS=1 ./vendor/phpunit/phpunit/phpunit -c phpunit.integration.xml
-
 # Command for running JS and PHP tests. Works for package.json files in the js/
 # and root directory. If phpunit is not installed systemwide, a copy is fetched
 # from the internet
 .PHONY: test
 test: php-test-dependencies
 	$(MAKE) unit-test
-	$(MAKE) integration-test
 	$(MAKE) phpcs
 	$(MAKE) phpstan
 	$(MAKE) js-test

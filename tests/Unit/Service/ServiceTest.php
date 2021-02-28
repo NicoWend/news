@@ -14,7 +14,8 @@
 namespace OCA\News\Tests\Unit\Service;
 
 use OCA\News\Db\Feed;
-use OCA\News\Db\ItemMapper;
+use OCA\News\Db\ItemMapperV2;
+use OCA\News\Service\Exceptions\ServiceConflictException;
 use OCA\News\Service\Exceptions\ServiceNotFoundException;
 use OCA\News\Service\Service;
 use \OCP\AppFramework\Db\DoesNotExistException;
@@ -24,41 +25,24 @@ use \OCA\News\Db\Folder;
 use PHPUnit\Framework\TestCase;
 use Psr\Log\LoggerInterface;
 
-
-class TestLegacyService extends Service
-{
-    public function __construct($mapper, $logger)
-    {
-        parent::__construct($mapper, $logger);
-    }
-
-    public function findAllForUser(string $userId, array $params = []): array
-    {
-        // TODO: Implement findAllForUser() method.
-    }
-
-    public function findAll(): array
-    {
-        // TODO: Implement findAll() method.
-    }
-}
-
 class ServiceTest extends TestCase
 {
 
     protected $mapper;
     protected $logger;
-    protected $newsService;
+    protected $class;
 
     protected function setUp(): void
     {
-        $this->mapper = $this->getMockBuilder(ItemMapper::class)
+        $this->mapper = $this->getMockBuilder(ItemMapperV2::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->logger = $this->getMockBuilder(LoggerInterface::class)
             ->disableOriginalConstructor()
             ->getMock();
-        $this->newsService = new TestLegacyService($this->mapper, $this->logger);
+        $this->class = $this->getMockBuilder(Service::class)
+                            ->setConstructorArgs([$this->mapper, $this->logger])
+                            ->getMockForAbstractClass();
     }
 
 
@@ -73,11 +57,23 @@ class ServiceTest extends TestCase
             ->method('delete')
             ->with($this->equalTo($folder));
         $this->mapper->expects($this->once())
-            ->method('find')
+            ->method('findFromUser')
             ->with($this->equalTo($user), $this->equalTo($id))
             ->will($this->returnValue($folder));
 
-        $this->newsService->delete($user, $id);
+        $this->class->delete($user, $id);
+    }
+
+
+    public function testInsert()
+    {
+        $folder = new Folder();
+
+        $this->mapper->expects($this->once())
+            ->method('insert')
+            ->with($this->equalTo($folder));
+
+        $this->class->insert($folder);
     }
 
 
@@ -87,11 +83,11 @@ class ServiceTest extends TestCase
         $user = 'ken';
 
         $this->mapper->expects($this->once())
-            ->method('find')
+            ->method('findFromUser')
             ->with($this->equalTo($user), $this->equalTo($id))
             ->will($this->returnValue(new Feed()));
 
-        $this->newsService->find($user, $id);
+        $this->class->find($user, $id);
     }
 
 
@@ -100,11 +96,11 @@ class ServiceTest extends TestCase
         $ex = new DoesNotExistException('hi');
 
         $this->mapper->expects($this->once())
-            ->method('find')
+            ->method('findFromUser')
             ->will($this->throwException($ex));
 
         $this->expectException(ServiceNotFoundException::class);
-        $this->newsService->find('', 1);
+        $this->class->find('', 1);
     }
 
 
@@ -113,11 +109,29 @@ class ServiceTest extends TestCase
         $ex = new MultipleObjectsReturnedException('hi');
 
         $this->mapper->expects($this->once())
-            ->method('find')
+            ->method('findFromUser')
             ->will($this->throwException($ex));
 
-        $this->expectException(ServiceNotFoundException::class);
-        $this->newsService->find('', 1);
+        $this->expectException(ServiceConflictException::class);
+        $this->class->find('', 1);
+    }
+
+
+    public function testDeleteUser()
+    {
+        $feed1 = Feed::fromParams(['id' => 1]);
+        $feed2 = Feed::fromParams(['id' => 2]);
+
+        $this->class->expects($this->once())
+                    ->method('findAllForUser')
+                    ->with('')
+                    ->willReturn([$feed1, $feed2]);
+
+        $this->mapper->expects($this->exactly(2))
+            ->method('delete')
+            ->withConsecutive([$feed1], [$feed2]);
+
+        $this->class->deleteUser('');
     }
 
 }

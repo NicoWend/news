@@ -11,8 +11,8 @@ updates:
     schedule:
       interval: "daily"
     labels:
+      - "dependencies"
       - "Skip-Changelog"
-      - "javascript"
 
   # Maintain dependencies for Composer
   - package-ecosystem: "composer"
@@ -20,5 +20,14 @@ updates:
     schedule:
       interval: "daily"
     labels:
+      - "dependencies"
       - "Skip-Changelog"
-      - "php"
+
+  # Maintain dependencies for GitHub Actions
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"
+    labels:
+      - "dependencies"
+      - "Skip-Changelog"

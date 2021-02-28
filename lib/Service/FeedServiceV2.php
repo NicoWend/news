@@ -18,22 +18,15 @@ use FeedIo\Reader\ReadErrorException;
 use HTMLPurifier;
 
 use OCA\News\Db\FeedMapperV2;
+use OCA\News\Db\Folder;
 use OCA\News\Fetcher\FeedFetcher;
 use OCA\News\Service\Exceptions\ServiceConflictException;
 use OCA\News\Service\Exceptions\ServiceNotFoundException;
 use OCP\AppFramework\Db\Entity;
-use OCP\AppFramework\Db\MultipleObjectsReturnedException;
-use OCP\ILogger;
-use OCP\IL10N;
 use OCP\AppFramework\Db\DoesNotExistException;
 
 use OCA\News\Db\Feed;
 use OCA\News\Db\Item;
-use OCA\News\Db\FeedMapper;
-use OCA\News\Db\ItemMapper;
-use OCA\News\Fetcher\Fetcher;
-use OCA\News\Config\Config;
-use OCA\News\Utility\Time;
 use Psr\Log\LoggerInterface;
 
 /**
@@ -105,22 +98,6 @@ class FeedServiceV2 extends Service
     }
 
     /**
-     * Finds a feed of a user
-     *
-     * @param string $userId the name of the user
-     * @param string $id     the id of the feed
-     *
-     * @return Feed
-     *
-     * @throws DoesNotExistException
-     * @throws MultipleObjectsReturnedException
-     */
-    public function findForUser(string $userId, string $id): Feed
-    {
-        return $this->mapper->findFromUser($userId, $id);
-    }
-
-    /**
      * @param int|null $id
      *
      * @return Feed[]
@@ -139,10 +116,11 @@ class FeedServiceV2 extends Service
      */
     public function findAllForUserRecursive(string $userId): array
     {
+        /** @var Feed[] $feeds */
         $feeds = $this->mapper->findAllFromUser($userId);
 
         foreach ($feeds as &$feed) {
-            $items = $this->itemService->findAllForFeed($feed->getId());
+            $items = $this->itemService->findAllInFeed($userId, $feed->getId());
             $feed->items = $items;
         }
         return $feeds;
@@ -168,11 +146,23 @@ class FeedServiceV2 extends Service
      */
     public function existsForUser(string $userID, string $url): bool
     {
+        return $this->findByURL($userID, $url) !== null;
+    }
+
+    /**
+     * Check if a feed exists for a user
+     *
+     * @param string $userID the name of the user
+     * @param string $url    the feed URL
+     *
+     * @return Entity|Feed|null
+     */
+    public function findByURL(string $userID, string $url): ?Entity
+    {
         try {
-            $this->mapper->findByURL($userID, $url);
-            return true;
+            return $this->mapper->findByURL($userID, $url);
         } catch (DoesNotExistException $e) {
-            return false;
+            return null;
         }
     }
 
@@ -257,7 +247,7 @@ class FeedServiceV2 extends Service
             return $feed;
         }
 
-        // for backwards compability it can be that the location is not set
+        // for backwards compatibility it can be that the location is not set
         // yet, if so use the url
         $location = $feed->getLocation() ?? $feed->getUrl();
 
@@ -268,75 +258,103 @@ class FeedServiceV2 extends Service
              */
             list($fetchedFeed, $items) = $this->feedFetcher->fetch(
                 $location,
-                false,
-                $feed->getHttpLastModified(),
                 $feed->getFullTextEnabled(),
                 $feed->getBasicAuthUser(),
                 $feed->getBasicAuthPassword()
             );
-
-            // if there is no feed it means that no update took place
-            if (!$fetchedFeed) {
-                return $feed;
-            }
-
-            // update number of articles on every feed update
-            $itemCount = count($items);
-
-            // this is needed to adjust to updates that add more items
-            // than when the feed was created. You can't update the count
-            // if it's lower because it may be due to the caching headers
-            // that were sent as the request and it might cause unwanted
-            // deletion and reappearing of feeds
-            if ($itemCount > $feed->getArticlesPerUpdate()) {
-                $feed->setArticlesPerUpdate($itemCount);
-            }
-
-            $feed->setHttpLastModified($fetchedFeed->getHttpLastModified())
-                 ->setHttpEtag($fetchedFeed->getHttpEtag())
-                 ->setLocation($fetchedFeed->getLocation());
-
-            // insert items in reverse order because the first one is
-            // usually the newest item
-            for ($i = $itemCount - 1; $i >= 0; $i--) {
-                $item = $items[$i];
-                $item->setFeedId($feed->getId())
-                     ->setBody($this->purifier->purify($item->getBody()));
-
-                // update modes: 0 nothing, 1 set unread
-                if ($feed->getUpdateMode() === 1) {
-                    $item->setUnread(true);
-                }
-
-                $this->itemService->insertOrUpdate($item);
-            }
-
-            // mark feed as successfully updated
-            $feed->setUpdateErrorCount(0);
-            $feed->setLastUpdateError(null);
         } catch (ReadErrorException $ex) {
             $feed->setUpdateErrorCount($feed->getUpdateErrorCount() + 1);
             $feed->setLastUpdateError($ex->getMessage());
+
+            return $this->mapper->update($feed);
         }
 
-        return $this->mapper->update($feed);
+        // if there is no feed it means that no update took place
+        if (!$fetchedFeed) {
+            return $feed;
+        }
+
+        // update number of articles on every feed update
+        $itemCount = count($items);
+
+        // this is needed to adjust to updates that add more items
+        // than when the feed was created. You can't update the count
+        // if it's lower because it may be due to the caching headers
+        // that were sent as the request and it might cause unwanted
+        // deletion and reappearing of feeds
+        if ($itemCount > $feed->getArticlesPerUpdate()) {
+            $feed->setArticlesPerUpdate($itemCount);
+        }
+
+        $feed->setHttpLastModified($fetchedFeed->getHttpLastModified())
+             ->setLocation($fetchedFeed->getLocation());
+
+        foreach (array_reverse($items) as &$item) {
+            $item->setFeedId($feed->getId())
+                 ->setBody($this->purifier->purify($item->getBody()));
+
+            // update modes: 0 nothing, 1 set unread
+            if ($feed->getUpdateMode() === Feed::UPDATE_MODE_NORMAL) {
+                $item->setUnread(true);
+            }
+
+            $item = $this->itemService->insertOrUpdate($item);
+        }
+
+
+        // mark feed as successfully updated
+        $feed->setUpdateErrorCount(0);
+        $feed->setLastUpdateError(null);
+
+        $unreadCount = 0;
+        array_map(function (Item $item) use (&$unreadCount) {
+            if ($item->isUnread()) {
+                $unreadCount++;
+            }
+        }, $items);
+
+        return $this->mapper->update($feed)->setUnreadCount($unreadCount);
     }
 
-    public function delete(string $user, int $id): void
+    /**
+     * Remove deleted entities.
+     *
+     * @param string|null $userID       The user to purge
+     * @param int|null    $minTimestamp The timestamp to purge from
+     *
+     * @return void
+     */
+    public function purgeDeleted(?string $userID, ?int $minTimestamp): void
     {
-        $feed = $this->mapper->findFromUser($user, $id);
-        $this->mapper->delete($feed);
+        $this->mapper->purgeDeleted($userID, $minTimestamp);
     }
 
-    public function purgeDeleted(): void
-    {
-        $this->mapper->purgeDeleted();
-    }
-
+    /**
+     * Fetch all feeds.
+     *
+     * @see FeedServiceV2::fetch()
+     */
     public function fetchAll(): void
     {
         foreach ($this->findAll() as $feed) {
             $this->fetch($feed);
         }
+    }
+
+    /**
+     * Mark a feed as read
+     *
+     * @param string   $userId    Feed owner
+     * @param int      $id        Feed ID
+     * @param int|null $maxItemID Highest item ID to mark as read
+     *
+     * @throws ServiceConflictException
+     * @throws ServiceNotFoundException
+     */
+    public function read(string $userId, int $id, ?int $maxItemID = null): void
+    {
+        $feed = $this->find($userId, $id);
+
+        $this->mapper->read($userId, $feed->getId(), $maxItemID);
     }
 }

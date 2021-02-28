@@ -18,7 +18,6 @@ use OCP\AppFramework\Db\DoesNotExistException;
 use OCP\AppFramework\Db\MultipleObjectsReturnedException;
 use OCP\AppFramework\Db\QBMapper;
 use OCP\IDBConnection;
-use OCP\AppFramework\Db\Mapper;
 use OCP\AppFramework\Db\Entity;
 
 /**
@@ -28,7 +27,19 @@ use OCP\AppFramework\Db\Entity;
  */
 abstract class NewsMapperV2 extends QBMapper
 {
-    const TABLE_NAME = '';
+    /**
+     * Name of the table
+     *
+     * @var ?string
+     */
+    const TABLE_NAME = null;
+
+    /**
+     * Maximum number of prepared parameters that PDO can handle
+     *
+     * @var int
+     */
+    const PDO_PARAMS_LIMIT = 65535;
 
     /**
      * @var Time
@@ -53,7 +64,9 @@ abstract class NewsMapperV2 extends QBMapper
 
     public function update(Entity $entity): Entity
     {
-        $entity->setLastModified($this->time->getMicroTime());
+        if ([] !== $entity->getUpdatedFields()) {
+            $entity->setLastModified($this->time->getMicroTime());
+        }
         return parent::update($entity);
     }
 
@@ -64,16 +77,30 @@ abstract class NewsMapperV2 extends QBMapper
     }
 
     /**
-     * Remove deleted items.
+     * Remove deleted entities.
+     *
+     * @param string|null $userID       The user to purge
+     * @param int|null    $oldestDelete The timestamp to purge from
      *
      * @return void
      */
-    public function purgeDeleted(): void
+    public function purgeDeleted(?string $userID, ?int $oldestDelete): void
     {
         $builder = $this->db->getQueryBuilder();
         $builder->delete($this->tableName)
-            ->where('deleted_at != 0')
-            ->execute();
+                ->andWhere('deleted_at != 0');
+
+        if ($userID !== null) {
+            $builder->andWhere('user_id = :user_id')
+                ->setParameter('user_id', $userID);
+        }
+
+        if ($oldestDelete !== null) {
+            $builder->andWhere('deleted_at < :deleted_at')
+                    ->setParameter('deleted_at', $oldestDelete);
+        }
+
+        $builder->execute();
     }
 
     /**

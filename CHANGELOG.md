@@ -1,7 +1,152 @@
 # Changelog
 All notable changes to this project will be documented in this file.
+The format is almost based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), older entries don't fully match.
 
-## Unreleased
+## [Unreleased]
+
+### Changed
+
+### Fixed
+
+## [15.4.0-beta2] - 2021-02-27
+### Fixed
+- Item list not using ID for offset 2 (#1200)
+
+## [15.4.0-beta1] - 2021-02-23
+### Changed
+- Remove outdated item DB code. ( #1056)
+- Stop returning all feeds after marking folder as read. (#1056)
+- Always fetch favicon (#1164)
+- Use feed logo instead of favicon if it exists and is square (#1164)
+- Add CI for item lists (#1180)
+
+### Fixed
+- Item list throwing error for folder and "all items" (#1180)
+- Articles with high IDs can be placed lower than articles with low IDs (#1147)
+- Feeds are accidentally moved on rename (#1189)
+- Item list not using ID for offset (#1188)
+
+## [15.3.2] - 2021-02-10
+No changes compared to RC2
+
+## [15.3.2-rc2] - 2021-02-10
+### Fixed
+- Missing certificate in signature file (#1143)
+
+## [15.3.2-rc1] - 2021-02-10
+
+### Fixed
+- Refetching of already read articles after purging (#1142)
+
+## [15.3.1] - 2021-02-06
+
+### Changed
+- New release without any changes compared to 15.3.0
+
+## [15.3.1-rc3] - 2021-02-06
+
+### Changed
+- re-re-re-release of 15.3.0
+
+## [15.3.1-rc2] - 2021-02-06
+
+### Changed
+- re-re-release of 15.3.0
+
+## [15.3.1-rc1] - 2021-02-05
+
+### Changed
+- re-release of 15.3.0
+
+## [15.3.0] - 2021-02-05
+
+### Changed
+- DB: Remove unused fields and migrate last_modified to signed, to support dates before 1970
+
+### Fixed
+- Release: create signature file (#1117)
+- Articles are refetched after purging leaving them unread again (#1122)
+
+## [15.2.2] - 2021-02-02
+
+### Fixed
+- Remove a .git dir from the release archive
+
+## [15.2.1] - 2021-02-02
+
+### Fixed
+- Purging error "Undefined index: articlesPerUpdate"
+- Clean up install files
+
+## [15.2.0] - 2021-02-02
+
+### Changed
+You can now delete unread items via occ:
+`occ news:updater:after-update --purge-unread [<purge-count>]`
+
+### Fixed
+- Item purger does not work with PostgreSQL (#1094)
+- Export starred/unread correctly (#1010)
+
+## [15.2.0-rc1] - 2021-01-31
+
+### Changed
+- Use signed integer for pubdate (#997)
+- revert alternating row colors and increase row height (#1012)
+
+### Fixed
+- Fetch feed after creation (#1058)
+- Implement missing item purger (#1063)
+- Update FeedIO Response call and add tests
+- Improve Psalm tests and dependency definition
+
+## [15.2.0-beta2] - 2021-01-17
+
+### Fixed
+- opened state of folders is not restored (#1040)
+- Argument 3 passed to OCA\News\Db\ItemMapper::makeSelectQuery() must be of the type bool, array given (#1044)
+- Argument 2 passed to OCA\News\Db\ItemMapper::findAllNewFeed() must be of the type int, string given (#1049)
+
+## [15.2.0-beta1] - 2021-01-11
+
+### Changed
+- Remove outdated feed DB code
+- add background & hover for entries
+- Improve spacing of open articles in compact mode (nextcloud/news#1017)
+
+### Fixed
+- `MissingNamedParameter` exception after upgrading to NC 21 beta5 (#1030)
+
+## [15.1.1] - 2020-12-27
+
+### Changed
+- Remove PHPunit based integration tests
+
+### Fixed
+- Argument 2 passed to OCA\News\Db\FeedMapper::find() must be of the type int, string given #996
+
+## 15.1.1-rc2
+
+### Changed
+- add background & hover for entries for compact mode
+
+### Fixed
+- Handle unauthorized users #985
+- Call to undefined method OCA\News\Db\FeedMapperV2::find() #981
+
+## 15.1.1-rc1
+
+### Changed
+- Remove outdated folder DB code
+
+### Fixed
+- Export Unread/Starred Articles gives Error Message #963
+- Some events don't appear in feed #921
+
+## 15.1.0
+
+### Changed
+- This version brings some major changes, be aware that some clients may not support this news version.
 
 ## 15.1.0-rc3
 

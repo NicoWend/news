@@ -1,9 +1,6 @@
 OC.L10N.register(
     "news",
     {
-    "Can not add feed: Exists already" : "لا يمكن اضافة هذا الملقم:هو موجود بالفعل",
-    "Articles without feed" : "مقالات بدون ملقم",
-    "Can not add folder: Exists already" : "لا يمكن اضافة المجلد:موجود بالفعل",
     "News" : "الأخبار",
     "Saved" : "حفظ",
     "Download" : "تنزيل",

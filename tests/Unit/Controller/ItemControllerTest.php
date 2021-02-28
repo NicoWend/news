@@ -14,17 +14,19 @@
 namespace OCA\News\Tests\Unit\Controller;
 
 use OCA\News\Controller\ItemController;
-use OCA\News\Service\FeedService;
-use OCA\News\Service\ItemService;
+use OCA\News\Service\FeedServiceV2;
+use OCA\News\Service\ItemServiceV2;
 use \OCP\AppFramework\Http;
 
 use \OCA\News\Db\Item;
 use \OCA\News\Db\Feed;
-use \OCA\News\Db\FeedType;
+use \OCA\News\Db\ListType;
 use \OCA\News\Service\Exceptions\ServiceNotFoundException;
 use OCP\IConfig;
 use OCP\IRequest;
 
+use OCP\IUser;
+use OCP\IUserSession;
 use PHPUnit\Framework\TestCase;
 
 
@@ -32,11 +34,30 @@ class ItemControllerTest extends TestCase
 {
 
     private $appName;
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|IConfig
+     */
     private $settings;
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|ItemServiceV2
+     */
     private $itemService;
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|FeedServiceV2
+     */
     private $feedService;
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|IRequest
+     */
     private $request;
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|IUser
+     */
     private $user;
+    /**
+     * @var \PHPUnit\Framework\MockObject\MockObject|IUserSession
+     */
+    private $userSession;
     private $controller;
     private $newestItemId;
 
@@ -47,25 +68,35 @@ class ItemControllerTest extends TestCase
     public function setUp(): void
     {
         $this->appName = 'news';
-        $this->user = 'jackob';
         $this->settings = $this->getMockBuilder(IConfig::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->itemService =
-        $this->getMockBuilder(ItemService::class)
+        $this->getMockBuilder(ItemServiceV2::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->feedService =
-        $this->getMockBuilder(FeedService::class)
+        $this->getMockBuilder(FeedServiceV2::class)
             ->disableOriginalConstructor()
             ->getMock();
         $this->request = $this->getMockBuilder(IRequest::class)
             ->disableOriginalConstructor()
             ->getMock();
+        $this->user = $this->getMockBuilder(IUser::class)->getMock();
+        $this->user->expects($this->any())
+            ->method('getUID')
+            ->will($this->returnValue('user'));
+        $this->userSession = $this->getMockBuilder(IUserSession::class)
+            ->getMock();
+        $this->userSession->expects($this->any())
+            ->method('getUser')
+            ->will($this->returnValue($this->user));
         $this->controller = new ItemController(
-            $this->appName, $this->request,
-            $this->feedService, $this->itemService, $this->settings,
-            $this->user
+            $this->request,
+            $this->feedService,
+            $this->itemService,
+            $this->settings,
+            $this->userSession
         );
         $this->newestItemId = 12312;
     }
@@ -75,7 +106,7 @@ class ItemControllerTest extends TestCase
     {
         $this->itemService->expects($this->once())
             ->method('read')
-            ->with(4, true, $this->user);
+            ->with('user', 4, true);
 
         $this->controller->read(4, true);
     }
@@ -92,7 +123,7 @@ class ItemControllerTest extends TestCase
         $response = $this->controller->read(4);
         $params = json_decode($response->render(), true);
 
-        $this->assertEquals($response->getStatus(), Http::STATUS_NOT_FOUND);
+        $this->assertEquals(Http::STATUS_NOT_FOUND, $response->getStatus());
         $this->assertEquals($msg, $params['message']);
     }
 
@@ -102,8 +133,8 @@ class ItemControllerTest extends TestCase
         $this->itemService->expects($this->exactly(2))
             ->method('read')
             ->withConsecutive(
-                [2, true, $this->user],
-                [4, true, $this->user]
+                ['user', 2, true],
+                ['user', 4, true]
             );
 
         $this->controller->readMultiple([2, 4]);
@@ -116,10 +147,10 @@ class ItemControllerTest extends TestCase
         $this->itemService->expects($this->exactly(2))
             ->method('read')
             ->withConsecutive(
-                [2, true, $this->user],
-                [4, true, $this->user]
+                ['user', 2, true],
+                ['user', 4, true]
             )
-            ->willReturnOnConsecutiveCalls($this->throwException(new ServiceNotFoundException('yo')), null);
+            ->willReturnOnConsecutiveCalls($this->throwException(new ServiceNotFoundException('yo')), new Item());
         $this->controller->readMultiple([2, 4]);
     }
 
@@ -127,13 +158,8 @@ class ItemControllerTest extends TestCase
     public function testStar()
     {
         $this->itemService->expects($this->once())
-            ->method('star')
-            ->with(
-                $this->equalTo(4),
-                $this->equalTo('test'),
-                $this->equalTo(true),
-                $this->equalTo($this->user)
-            );
+            ->method('starByGuid')
+            ->with('user', 4, 'test', true);
 
         $this->controller->star(4, 'test', true);
     }
@@ -144,13 +170,13 @@ class ItemControllerTest extends TestCase
         $msg = 'ho';
 
         $this->itemService->expects($this->once())
-            ->method('star')
+            ->method('starByGuid')
             ->will($this->throwException(new ServiceNotFoundException($msg)));
 
         $response = $this->controller->star(4, 'test', false);
         $params = json_decode($response->render(), true);
 
-        $this->assertEquals($response->getStatus(), Http::STATUS_NOT_FOUND);
+        $this->assertEquals(Http::STATUS_NOT_FOUND, $response->getStatus());
         $this->assertEquals($msg, $params['message']);
     }
 
@@ -163,120 +189,185 @@ class ItemControllerTest extends TestCase
 
         $this->itemService->expects($this->once())
             ->method('readAll')
-            ->with(
-                $this->equalTo(5),
-                $this->equalTo($this->user)
-            );
+            ->with('user', 5);
         $this->feedService->expects($this->once())
             ->method('findAllForUser')
-            ->with($this->equalTo($this->user))
+            ->with('user')
             ->will($this->returnValue([$feed]));
 
         $response = $this->controller->readAll(5);
         $this->assertEquals($expected, $response);
     }
 
-
-    private function itemsApiExpects($id, $type, $oldestFirst = '1')
+    /**
+     * Setup expectations for settings
+     *
+     * @param        $id
+     * @param        $type
+     * @param string $oldestFirst
+     */
+    private function itemsApiExpects($id, $type, $oldestFirst = '1'): void
     {
         $this->settings->expects($this->exactly(2))
             ->method('getUserValue')
             ->withConsecutive(
-                [$this->user, $this->appName, 'showAll'],
-                [$this->user, $this->appName, 'oldestFirst']
+                ['user', $this->appName, 'showAll'],
+                ['user', $this->appName, 'oldestFirst']
             )
             ->willReturnOnConsecutiveCalls('1', $oldestFirst);
         $this->settings->expects($this->exactly(2))
             ->method('setUserValue')
             ->withConsecutive(
-                [$this->user, $this->appName, 'lastViewedFeedId', $id],
-                [$this->user, $this->appName, 'lastViewedFeedType', $type]
+                ['user', $this->appName, 'lastViewedFeedId', $id],
+                ['user', $this->appName, 'lastViewedFeedType', $type]
             );
     }
 
 
-    public function testIndex()
+    public function testIndexForFeed()
     {
         $feeds = [new Feed()];
         $result = [
             'items' => [new Item()],
             'feeds' => $feeds,
             'newestItemId' => $this->newestItemId,
-            'starred' => 3111
+            'starred' => 3
         ];
 
-        $this->itemsApiExpects(2, FeedType::FEED, '0');
+        $this->itemsApiExpects(2, ListType::FEED, '0');
 
         $this->feedService->expects($this->once())
             ->method('findAllForUser')
-            ->with($this->equalTo($this->user))
+            ->with('user')
             ->will($this->returnValue($feeds));
 
         $this->itemService->expects($this->once())
-            ->method('getNewestItemId')
-            ->with($this->equalTo($this->user))
-            ->will($this->returnValue($this->newestItemId));
+            ->method('newest')
+            ->with('user')
+            ->will($this->returnValue(Item::fromParams(['id' => $this->newestItemId])));
 
         $this->itemService->expects($this->once())
-            ->method('starredCount')
-            ->with($this->equalTo($this->user))
-            ->will($this->returnValue(3111));
+            ->method('starred')
+            ->with('user')
+            ->will($this->returnValue([1, 2, 3]));
 
         $this->itemService->expects($this->once())
-            ->method('findAllItems')
-            ->with(2, FeedType::FEED, 3, 0, true, false, $this->user, [])
+            ->method('findAllInFeedWithFilters')
+            ->with('user', 2, 3, 0, false, false, [])
             ->will($this->returnValue($result['items']));
 
-        $response = $this->controller->index(FeedType::FEED, 2, 3);
+        $response = $this->controller->index(ListType::FEED, 2, 3);
         $this->assertEquals($result, $response);
     }
 
 
-    public function testIndexSearch()
+    public function testIndexForFolder()
     {
         $feeds = [new Feed()];
         $result = [
             'items' => [new Item()],
             'feeds' => $feeds,
             'newestItemId' => $this->newestItemId,
-            'starred' => 3111
+            'starred' => 3
         ];
 
-        $this->itemsApiExpects(2, FeedType::FEED, '0');
+        $this->itemsApiExpects(2, ListType::FOLDER, '0');
 
         $this->feedService->expects($this->once())
             ->method('findAllForUser')
-            ->with($this->equalTo($this->user))
+            ->with('user')
             ->will($this->returnValue($feeds));
 
         $this->itemService->expects($this->once())
-            ->method('getNewestItemId')
-            ->with($this->equalTo($this->user))
-            ->will($this->returnValue($this->newestItemId));
+            ->method('newest')
+            ->with('user')
+            ->will($this->returnValue(Item::fromParams(['id' => $this->newestItemId])));
 
         $this->itemService->expects($this->once())
-            ->method('starredCount')
-            ->with($this->equalTo($this->user))
-            ->will($this->returnValue(3111));
+            ->method('starred')
+            ->with('user')
+            ->will($this->returnValue([1, 2, 3]));
 
         $this->itemService->expects($this->once())
-            ->method('findAllItems')
-            ->with(
-                $this->equalTo(2),
-                $this->equalTo(FeedType::FEED),
-                $this->equalTo(3),
-                $this->equalTo(0),
-                $this->equalTo(true),
-                $this->equalTo(false),
-                $this->equalTo($this->user),
-                $this->equalTo(['test', 'search'])
-            )
+            ->method('findAllInFolderWithFilters')
+            ->with('user', 2, 3, 0, false, false, [])
             ->will($this->returnValue($result['items']));
 
-        $response = $this->controller->index(
-            FeedType::FEED, 2, 3,
-            0, null, null, 'test%20%20search%20'
-        );
+        $response = $this->controller->index(ListType::FOLDER, 2, 3);
+        $this->assertEquals($result, $response);
+    }
+
+
+    public function testIndexForOther()
+    {
+        $feeds = [new Feed()];
+        $result = [
+            'items' => [new Item()],
+            'feeds' => $feeds,
+            'newestItemId' => $this->newestItemId,
+            'starred' => 3
+        ];
+
+        $this->itemsApiExpects(2, ListType::STARRED, '0');
+
+        $this->feedService->expects($this->once())
+            ->method('findAllForUser')
+            ->with('user')
+            ->will($this->returnValue($feeds));
+
+        $this->itemService->expects($this->once())
+            ->method('newest')
+            ->with('user')
+            ->will($this->returnValue(Item::fromParams(['id' => $this->newestItemId])));
+
+        $this->itemService->expects($this->once())
+            ->method('starred')
+            ->with('user')
+            ->will($this->returnValue([1, 2, 3]));
+
+        $this->itemService->expects($this->once())
+            ->method('findAllWithFilters')
+            ->with('user', 2, 3, 0, false, [])
+            ->will($this->returnValue($result['items']));
+
+        $response = $this->controller->index(ListType::STARRED, 2, 3);
+        $this->assertEquals($result, $response);
+    }
+
+
+    public function testIndexSearchFeed()
+    {
+        $feeds = [new Feed()];
+        $result = [
+            'items' => [new Item()],
+            'feeds' => $feeds,
+            'newestItemId' => $this->newestItemId,
+            'starred' => 3
+        ];
+
+        $this->itemsApiExpects(2, ListType::FEED, '0');
+
+        $this->feedService->expects($this->once())
+            ->method('findAllForUser')
+            ->with('user')
+            ->will($this->returnValue($feeds));
+
+        $this->itemService->expects($this->once())
+            ->method('newest')
+            ->with('user')
+            ->will($this->returnValue(Item::fromParams(['id' => $this->newestItemId])));
+
+        $this->itemService->expects($this->once())
+            ->method('starred')
+            ->with('user')
+            ->will($this->returnValue([1, 2, 3]));
+
+        $this->itemService->expects($this->once())
+            ->method('findAllInFeedWithFilters')
+            ->with('user', 2, 3, 0, false, false, ['test', 'search'])
+            ->will($this->returnValue($result['items']));
+
+        $response = $this->controller->index(ListType::FEED, 2, 3, 0, null, null, 'test%20%20search%20');
         $this->assertEquals($result, $response);
     }
 
@@ -285,89 +376,151 @@ class ItemControllerTest extends TestCase
     {
         $result = ['items' => [new Item()]];
 
-        $this->itemsApiExpects(2, FeedType::FEED);
+        $this->itemsApiExpects(2, ListType::FEED);
 
         $this->itemService->expects($this->once())
-            ->method('findAllItems')
-            ->with(
-                $this->equalTo(2),
-                $this->equalTo(FeedType::FEED),
-                $this->equalTo(3),
-                $this->equalTo(10),
-                $this->equalTo(true),
-                $this->equalTo(true),
-                $this->equalTo($this->user)
-            )
+            ->method('findAllInFeedWithFilters')
+            ->with('user', 2, 3, 10, false, true)
             ->will($this->returnValue($result['items']));
 
         $this->feedService->expects($this->never())
             ->method('findAllForUser');
 
-        $response = $this->controller->index(FeedType::FEED, 2, 3, 10);
+        $response = $this->controller->index(ListType::FEED, 2, 3, 10);
         $this->assertEquals($result, $response);
     }
 
 
     public function testGetItemsNoNewestItemsId()
     {
-        $this->itemsApiExpects(2, FeedType::FEED);
+        $this->itemsApiExpects(2, ListType::FEED);
 
         $this->itemService->expects($this->once())
-            ->method('getNewestItemId')
-            ->with($this->equalTo($this->user))
+            ->method('newest')
+            ->with('user')
             ->will($this->throwException(new ServiceNotFoundException('')));
 
-        $response = $this->controller->index(FeedType::FEED, 2, 3);
+        $response = $this->controller->index(ListType::FEED, 2, 3);
         $this->assertEquals([], $response);
     }
 
 
-    public function testNewItems()
+    public function testNewItemsFeed()
     {
         $feeds = [new Feed()];
         $result = [
             'items' => [new Item()],
             'feeds' => $feeds,
             'newestItemId' => $this->newestItemId,
-            'starred' => 3111
+            'starred' => 3
         ];
 
         $this->settings->expects($this->once())
             ->method('getUserValue')
-            ->with(
-                $this->equalTo($this->user),
-                $this->equalTo($this->appName),
-                $this->equalTo('showAll')
-            )
+            ->with('user', $this->appName, 'showAll')
             ->will($this->returnValue('1'));
 
         $this->feedService->expects($this->once())
             ->method('findAllForUser')
-            ->with($this->equalTo($this->user))
+            ->with('user')
             ->will($this->returnValue($feeds));
 
         $this->itemService->expects($this->once())
-            ->method('getNewestItemId')
-            ->with($this->equalTo($this->user))
-            ->will($this->returnValue($this->newestItemId));
+            ->method('newest')
+            ->with('user')
+            ->will($this->returnValue(Item::fromParams(['id' => $this->newestItemId])));
 
         $this->itemService->expects($this->once())
-            ->method('starredCount')
-            ->with($this->equalTo($this->user))
-            ->will($this->returnValue(3111));
+            ->method('starred')
+            ->with('user')
+            ->will($this->returnValue([1, 2, 3]));
 
         $this->itemService->expects($this->once())
-            ->method('findAllNew')
-            ->with(
-                $this->equalTo(2),
-                $this->equalTo(FeedType::FEED),
-                $this->equalTo(3),
-                $this->equalTo(true),
-                $this->equalTo($this->user)
-            )
+            ->method('findAllInFeedAfter')
+            ->with('user', 2, 3, false)
             ->will($this->returnValue($result['items']));
 
-        $response = $this->controller->newItems(FeedType::FEED, 2, 3);
+        $response = $this->controller->newItems(ListType::FEED, 2, 3);
+        $this->assertEquals($result, $response);
+    }
+
+
+    public function testNewItemsFolder()
+    {
+        $feeds = [new Feed()];
+        $result = [
+            'items' => [new Item()],
+            'feeds' => $feeds,
+            'newestItemId' => $this->newestItemId,
+            'starred' => 3
+        ];
+
+        $this->settings->expects($this->once())
+            ->method('getUserValue')
+            ->with('user', $this->appName, 'showAll')
+            ->will($this->returnValue('1'));
+
+        $this->feedService->expects($this->once())
+            ->method('findAllForUser')
+            ->with('user')
+            ->will($this->returnValue($feeds));
+
+        $this->itemService->expects($this->once())
+            ->method('newest')
+            ->with('user')
+            ->will($this->returnValue(Item::fromParams(['id' => $this->newestItemId])));
+
+        $this->itemService->expects($this->once())
+            ->method('starred')
+            ->with('user')
+            ->will($this->returnValue([1, 2, 3]));
+
+        $this->itemService->expects($this->once())
+            ->method('findAllInFolderAfter')
+            ->with('user', 2, 3, false)
+            ->will($this->returnValue($result['items']));
+
+        $response = $this->controller->newItems(ListType::FOLDER, 2, 3);
+        $this->assertEquals($result, $response);
+    }
+
+
+    public function testNewItemsOther()
+    {
+        $feeds = [new Feed()];
+        $result = [
+            'items' => [new Item()],
+            'feeds' => $feeds,
+            'newestItemId' => $this->newestItemId,
+            'starred' => 3
+        ];
+
+        $this->settings->expects($this->once())
+            ->method('getUserValue')
+            ->with('user', $this->appName, 'showAll')
+            ->will($this->returnValue('1'));
+
+        $this->feedService->expects($this->once())
+            ->method('findAllForUser')
+            ->with('user')
+            ->will($this->returnValue($feeds));
+
+        $this->itemService->expects($this->once())
+            ->method('newest')
+            ->with('user')
+            ->will($this->returnValue(Item::fromParams(['id' => $this->newestItemId])));
+
+        $this->itemService->expects($this->once())
+            ->method('starred')
+            ->with('user')
+            ->will($this->returnValue([1, 2, 3]));
+
+        $this->itemService->expects($this->once())
+            ->method('findAllAfter')
+            ->with('user', 6, 3)
+            ->will($this->returnValue($result['items']));
+
+        $response = $this->controller->newItems(ListType::UNREAD, 2, 3);
         $this->assertEquals($result, $response);
     }
 
@@ -376,19 +529,15 @@ class ItemControllerTest extends TestCase
     {
         $this->settings->expects($this->once())
             ->method('getUserValue')
-            ->with(
-                $this->equalTo($this->user),
-                $this->equalTo($this->appName),
-                $this->equalTo('showAll')
-            )
+            ->with('user', $this->appName, 'showAll')
             ->will($this->returnValue('1'));
 
         $this->itemService->expects($this->once())
-            ->method('getNewestItemId')
-            ->with($this->equalTo($this->user))
+            ->method('newest')
+            ->with('user')
             ->will($this->throwException(new ServiceNotFoundException('')));
 
-        $response = $this->controller->newItems(FeedType::FEED, 2, 3);
+        $response = $this->controller->newItems(ListType::FEED, 2, 3);
         $this->assertEquals([], $response);
     }
 

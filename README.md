@@ -1,8 +1,8 @@
 # Nextcloud News app
 
-**We need help with the frontend, check the issue tracker if you are interessted!**
+**We need help with the frontend, check the issue tracker if you are interested!**
 
-![Release status](https://github.com/nextcloud/news/workflows/Build%20and%20publish%20app%20release/badge.svg)![Integration Tests](https://github.com/nextcloud/news/workflows/Integration%20Tests/badge.svg)[![Frontend status](https://travis-ci.org/nextcloud/news.svg?branch=master)](https://travis-ci.org/nextcloud/news) [![Code coverage](https://img.shields.io/codecov/c/github/nextcloud/news.svg?style=flat-square)](https://codecov.io/gh/nextcloud/news/)
+![Release status](https://github.com/nextcloud/news/workflows/Build%20and%20publish%20app%20release/badge.svg) ![Integration Tests](https://github.com/nextcloud/news/workflows/Integration%20Tests/badge.svg) ![Frontend tests](https://github.com/nextcloud/news/workflows/Frontend%20tests/badge.svg) [![Code coverage](https://img.shields.io/codecov/c/github/nextcloud/news.svg?style=flat)](https://codecov.io/gh/nextcloud/news/)
 
 The News app is an RSS/Atom feed aggregator. It offers a [RESTful API](https://github.com/nextcloud/news/tree/master/docs/externalapi/Legacy.md) for app developers. The source code is [available on GitHub](https://github.com/nextcloud/news)
 
@@ -15,6 +15,7 @@ See the [install document](https://github.com/nextcloud/news/blob/master/docs/in
 * [Feeds are not updated](https://github.com/nextcloud/news/blob/master/docs/faq/README.md#feeds-not-updated)
 * [Adding feeds that use self-signed certificates](https://github.com/nextcloud/news/blob/master/docs/faq/README.md#adding-feeds-that-use-self-signed-certificates)
 * [Is There An Subscription URL To Easily Subscribe To Feeds](https://github.com/nextcloud/news/blob/master/docs/faq/README.md#is-there-an-subscription-url-to-easily-subscribe-to-feeds)
+* [Database table grows too big](https://github.com/nextcloud/news/blob/master/docs/faq/README.md#database-table-grows-too-big)
 
 ## Supported Browsers
 * Newest Firefox (Desktop, Android, Firefox OS)

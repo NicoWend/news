@@ -15,6 +15,7 @@ use OCA\News\Service\ItemServiceV2;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class AfterUpdate extends Command
@@ -35,18 +36,33 @@ class AfterUpdate extends Command
         $this->itemService = $itemService;
     }
 
+    /**
+     * @return void
+     */
     protected function configure()
     {
         $this->setName('news:updater:after-update')
             ->setDescription('removes old read articles which are not starred')
-            ->addArgument('purge_count', InputArgument::OPTIONAL, 'The amount of items to purge');
+            ->addArgument('purge-count', InputArgument::OPTIONAL, 'The amount of items to purge')
+            ->addOption('purge-unread', null, InputOption::VALUE_NONE, 'If unread items should be purged');
     }
 
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
-        $count = $input->getArgument('purge_count');
+        $count        = $input->getArgument('purge-count');
+        $removeUnread = $input->getOption('purge-unread');
 
-        $output->writeln($this->itemService->purgeOverThreshold($count));
+        if ($count !== null) {
+            $count = intval($count);
+        }
+
+        $result = $this->itemService->purgeOverThreshold($count, $removeUnread);
+        if ($result === null) {
+            $output->writeln('No cleanup needed', $output::VERBOSITY_VERBOSE);
+            return 0;
+        }
+
+        $output->writeln('Removed ' . $result . ' item(s)', $output::VERBOSITY_VERBOSE);
 
         return 0;
     }

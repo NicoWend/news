@@ -18,17 +18,17 @@ class UpdaterService
 {
 
     /**
-     * @var FolderService
+     * @var FolderServiceV2
      */
     private $folderService;
 
     /**
-     * @var FeedService
+     * @var FeedServiceV2
      */
     private $feedService;
 
     /**
-     * @var ItemService
+     * @var ItemServiceV2
      */
     private $itemService;
 
@@ -43,20 +43,20 @@ class UpdaterService
     }
 
 
-    public function beforeUpdate()
+    public function beforeUpdate(): void
     {
-        $this->folderService->purgeDeleted();
-        $this->feedService->purgeDeleted();
+        $this->folderService->purgeDeleted(null, null);
+        $this->feedService->purgeDeleted(null, null);
     }
 
 
-    public function update()
+    public function update(): void
     {
         $this->feedService->fetchAll();
     }
 
 
-    public function afterUpdate()
+    public function afterUpdate(): void
     {
         $this->itemService->purgeOverThreshold(null);
     }

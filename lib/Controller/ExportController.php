@@ -19,9 +19,14 @@ use OCA\News\Service\ItemServiceV2;
 use OCA\News\Service\OpmlService;
 use OCP\AppFramework\Http\DataDownloadResponse;
 use \OCP\IRequest;
-use \OCP\AppFramework\Controller;
 use \OCP\AppFramework\Http\JSONResponse;
+use OCP\IUserSession;
 
+/**
+ * Class ExportController
+ *
+ * @package OCA\News\Controller
+ */
 class ExportController extends Controller
 {
 
@@ -29,23 +34,20 @@ class ExportController extends Controller
     private $folderService;
     private $feedService;
     private $itemService;
-    private $userId;
 
     public function __construct(
-        string $appName,
         IRequest $request,
         FolderServiceV2 $folderService,
         FeedServiceV2 $feedService,
         ItemServiceV2 $itemService,
         OpmlService $opmlService,
-        string $UserId
+        ?IUserSession $userSession
     ) {
-        parent::__construct($appName, $request);
+        parent::__construct($request, $userSession);
         $this->feedService = $feedService;
         $this->folderService = $folderService;
         $this->opmlService = $opmlService;
         $this->itemService = $itemService;
-        $this->userId = $UserId;
     }
 
 
@@ -58,7 +60,7 @@ class ExportController extends Controller
         $date = date('Y-m-d');
 
         return new DataDownloadResponse(
-            $this->opmlService->export($this->userId),
+            $this->opmlService->export($this->getUserId()),
             "subscriptions-${date}.opml",
             'text/xml'
         );
@@ -71,8 +73,11 @@ class ExportController extends Controller
      */
     public function articles(): JSONResponse
     {
-        $feeds = $this->feedService->findAllForUser($this->userId);
-        $items = $this->itemService->findAllForUser($this->userId, ['unread' => true, 'starred' => true]);
+        $feeds = $this->feedService->findAllForUser($this->getUserId());
+        $starred = $this->itemService->findAllForUser($this->getUserId(), ['unread' => false, 'starred' => true]);
+        $unread = $this->itemService->findAllForUser($this->getUserId(), ['unread' => true]);
+
+        $items = array_merge($starred, $unread);
 
         // build assoc array for fast access
         $feedsDict = [];

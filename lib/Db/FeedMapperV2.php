@@ -52,7 +52,7 @@ class FeedMapperV2 extends NewsMapperV2
     {
         $builder = $this->db->getQueryBuilder();
         $builder->select('feeds.*', $builder->func()->count('items.id', 'unreadCount'))
-                ->from($this->tableName, 'feeds')
+                ->from(static::TABLE_NAME, 'feeds')
                 ->leftJoin(
                     'feeds',
                     ItemMapperV2::TABLE_NAME,
@@ -62,8 +62,8 @@ class FeedMapperV2 extends NewsMapperV2
                 ->where('feeds.user_id = :user_id')
                 ->andWhere('feeds.deleted_at = 0')
                 ->groupBy('feeds.id')
-                ->setParameter(':unread', true, IQueryBuilder::PARAM_BOOL)
-                ->setParameter(':user_id', $userId);
+                ->setParameter('unread', true, IQueryBuilder::PARAM_BOOL)
+                ->setParameter('user_id', $userId);
 
         return $this->findEntities($builder);
     }
@@ -74,7 +74,7 @@ class FeedMapperV2 extends NewsMapperV2
      * @param string $userId The user identifier
      * @param int    $id     The feed identifier
      *
-     * @return Entity
+     * @return Feed
      *
      * @throws DoesNotExistException
      * @throws MultipleObjectsReturnedException
@@ -82,12 +82,12 @@ class FeedMapperV2 extends NewsMapperV2
     public function findFromUser(string $userId, int $id): Entity
     {
         $builder = $this->db->getQueryBuilder();
-        $builder->addSelect('*')
-                ->from($this->tableName)
+        $builder->select('*')
+                ->from(static::TABLE_NAME)
                 ->where('user_id = :user_id')
                 ->andWhere('id = :id')
-                ->setParameter(':user_id', $userId)
-                ->setParameter(':id', $id);
+                ->setParameter('user_id', $userId)
+                ->setParameter('id', $id);
 
         return $this->findEntity($builder);
     }
@@ -101,7 +101,7 @@ class FeedMapperV2 extends NewsMapperV2
     {
         $builder = $this->db->getQueryBuilder();
         $builder->select('*')
-                ->from($this->tableName)
+                ->from(static::TABLE_NAME)
                 ->where('deleted_at = 0');
 
         return $this->findEntities($builder);
@@ -121,12 +121,12 @@ class FeedMapperV2 extends NewsMapperV2
     public function findByURL(string $userId, string $url): Entity
     {
         $builder = $this->db->getQueryBuilder();
-        $builder->addSelect('*')
-                ->from($this->tableName)
+        $builder->select('*')
+                ->from(static::TABLE_NAME)
                 ->where('user_id = :user_id')
                 ->andWhere('url = :url')
-                ->setParameter(':user_id', $userId)
-                ->setParameter(':url', $url);
+                ->setParameter('user_id', $userId)
+                ->setParameter('url', $url);
 
         return $this->findEntity($builder);
     }
@@ -141,16 +141,40 @@ class FeedMapperV2 extends NewsMapperV2
     public function findAllFromFolder(?int $id): array
     {
         $builder = $this->db->getQueryBuilder();
-        $builder->addSelect('*')
-                ->from($this->tableName);
+        $builder->select('*')
+                ->from(static::TABLE_NAME);
 
         if (is_null($id)) {
             $builder->where('folder_id IS NULL');
         } else {
             $builder->where('folder_id = :folder_id')
-                    ->setParameter(':folder_id', $id);
+                    ->setParameter('folder_id', $id);
         }
 
         return $this->findEntities($builder);
+    }
+
+    /**
+     * @param string   $userId
+     * @param int      $id
+     * @param int|null $maxItemID
+     */
+    public function read(string $userId, int $id, ?int $maxItemID = null): void
+    {
+        $builder = $this->db->getQueryBuilder();
+        $builder->update(ItemMapperV2::TABLE_NAME, 'items')
+            ->innerJoin('items', FeedMapperV2::TABLE_NAME, 'feeds', 'items.feed_id = feeds.id')
+            ->setValue('unread', 0)
+            ->andWhere('feeds.user_id = :userId')
+            ->andWhere('feeds.id = :feedId')
+            ->setParameter('userId', $userId)
+            ->setParameter('feedId', $id);
+
+        if ($maxItemID !== null) {
+            $builder->andWhere('items.id =< :maxItemId')
+                ->setParameter('maxItemId', $maxItemID);
+        }
+
+        $this->db->executeUpdate($builder->getSQL());
     }
 }

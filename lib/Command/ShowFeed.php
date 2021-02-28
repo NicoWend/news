@@ -41,6 +41,8 @@ class ShowFeed extends Command
 
     /**
      * Configure the command
+     *
+     * @return void
      */
     protected function configure()
     {
@@ -68,7 +70,7 @@ class ShowFeed extends Command
         $fullTextEnabled = (bool) $input->getOption('full-text');
 
         try {
-            list($feed, $items) = $this->feedFetcher->fetch($url, true, null, $fullTextEnabled, $user, $password);
+            list($feed, $items) = $this->feedFetcher->fetch($url, $fullTextEnabled, $user, $password);
         } catch (\Exception $ex) {
             $output->writeln('<error>Failed to fetch feed info:</error>');
             $output->writeln($ex->getMessage());

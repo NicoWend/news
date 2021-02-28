@@ -91,7 +91,7 @@ class ItemMapperTest extends MapperTestUtility
 
         $this->builder->expects($this->once())
             ->method('where')
-            ->with('feeds.user_id = :user_id')
+            ->with('(feeds.user_id = :user_id AND items.shared_by = \'\') OR items.shared_with = :shared_with')
             ->will($this->returnSelf());
 
         $this->builder->expects($this->once())
@@ -99,9 +99,9 @@ class ItemMapperTest extends MapperTestUtility
             ->with('feeds.deleted_at = 0')
             ->will($this->returnSelf());
 
-        $this->builder->expects($this->exactly(1))
+        $this->builder->expects($this->exactly(2))
             ->method('setParameter')
-            ->withConsecutive(['user_id', 'jack'])
+            ->withConsecutive(['user_id', 'jack'], ['shared_with', 'jack'])
             ->will($this->returnSelf());
 
         $this->builder->expects($this->once())
@@ -152,7 +152,7 @@ class ItemMapperTest extends MapperTestUtility
 
         $this->builder->expects($this->once())
             ->method('where')
-            ->with('feeds.user_id = :user_id')
+            ->with('(feeds.user_id = :user_id AND items.shared_by = \'\') OR items.shared_with = :shared_with')
             ->will($this->returnSelf());
 
         $this->builder->expects($this->exactly(2))
@@ -160,9 +160,9 @@ class ItemMapperTest extends MapperTestUtility
             ->withConsecutive(['feeds.deleted_at = 0'], ['key = :val'])
             ->will($this->returnSelf());
 
-        $this->builder->expects($this->exactly(1))
-            ->method('setParameter')
-            ->withConsecutive(['user_id', 'jack'])
+        $this->builder->expects($this->exactly(2))
+            ->method('setParameter') 
+            ->withConsecutive(['user_id', 'jack'], ['shared_with', 'jack'])
             ->will($this->returnSelf());
 
         $this->builder->expects($this->once())
@@ -294,7 +294,7 @@ class ItemMapperTest extends MapperTestUtility
 
         $this->builder->expects($this->once())
             ->method('where')
-            ->with('feeds.user_id = :user_id')
+            ->with('(feeds.user_id = :user_id AND items.shared_by = \'\') OR items.shared_with = :shared_with')
             ->will($this->returnSelf());
 
         $this->builder->expects($this->exactly(2))
@@ -302,9 +302,9 @@ class ItemMapperTest extends MapperTestUtility
             ->withConsecutive(['items.id = :item_id'], ['feeds.deleted_at = 0'])
             ->will($this->returnSelf());
 
-        $this->builder->expects($this->exactly(2))
+        $this->builder->expects($this->exactly(3))
             ->method('setParameter')
-            ->withConsecutive(['user_id', 'jack'], ['item_id', 4])
+            ->withConsecutive(['user_id', 'jack'], ['shared_with', 'jack'], ['item_id', 4])
             ->will($this->returnSelf());
 
         $this->builder->expects($this->once())

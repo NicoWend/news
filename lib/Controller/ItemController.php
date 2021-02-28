@@ -344,7 +344,7 @@ class ItemController extends Controller
      * @NoAdminRequired
      *
      * @param int $itemId           Item to share
-     * @param string $shareWithId   User to share with 
+     * @param string $shareWithId   User to share with
      */
     public function share($itemId, $shareWithId)
     {
@@ -360,5 +360,4 @@ class ItemController extends Controller
 
         return [];
     }
-
 }
